@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <!-- (1) Optimize for mobile versions: http://goo.gl/EOpFl -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- (1) force latest IE rendering engine: bit.ly/1c8EiC9 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Automating Rasterization of HTML elements on a Page | blog.stvjam.es</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Automating Rasterization of HTML elements on a Page | blog.stvjam.es">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:site" content="http://mark-read.info">
+    <meta name="twitter:creator" content="@MarkReadM">
+    <meta name="google-site-verification" content="">
+    <meta property="fb:admins" content="">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Automating Rasterization of HTML elements on a Page | blog.stvjam.es">
+    <meta property="og:description" content="">
+
+    <link rel="stylesheet" href="/js/styles/obsidian.css">
+    <link rel="stylesheet" href="//brick.a.ssl.fastly.net/Linux+Libertine:400,400i,700,700i/Open+Sans:400,400i,700,700i">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" media="print" href="/css/print.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/solarized.css" />
+    <!--
+    <link href="/css/commented.min.css" rel="stylesheet">
+    -->
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    
+</head>
+<body class="">
+
+    
+
+<main class="content" role="main">
+    <article class="post">
+
+        
+        <div class="noarticleimage">
+            <div class="post-meta">
+                <h1 class="post-title">Automating Rasterization of HTML elements on a Page</h1>
+                <div class="cf post-meta-text">
+                    <a class="silent-link" href="/about">
+                        <div class="author-image" style="background-image: url(https://s.gravatar.com/avatar/3ddbf93454e3af835de28be002cb07bf?s&#x3D;160)">Blog Logo</div>
+                        <h4 class="author-name" itemprop="author" itemscope itemtype="http://schema.org/Person">Stephen James</h4>
+                    </a>
+                    on
+                    <time datetime="2013-01-16">16 Jan 2013</time>
+                    , tagged on <a href="/tags/javascript/">javascript</a>, <a href="/tags/phantomjs/">phantomjs</a>, <a href="/tags/rasterization/">rasterization</a>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        
+        
+
+            <div class="post-reading">
+                <span class="post-reading-time"></span> read
+            </div>
+        <section class="post-content">
+            <a name="topofpage"></a>
+
+            <p><a href="http://phantomjs.org/" target="_blank" rel="external">PhantomJS</a> is a headless Webkit browser.  In other words, it’s all the awesome of Safari/Chrome without the UI and is capable of injecting Javascript into a loaded page, evaluating expressions within the browser sandbox and <a href="https://github.com/ariya/phantomjs/wiki/Screen-Capture" target="_blank" rel="external">screen capture</a>.  </p>
+<p>Its that last little bit that I’m really interested in, screen capture, so I headed along and found this simple <a href="https://github.com/ariya/phantomjs/blob/master/examples/rasterize.js" target="_blank" rel="external">rasterize.js</a> script (provided by the creator of PhantomJS)  which is good for taking full screenshots of your web-browser, but not so good if you are wanting to only take a screenshot of a particular element.  </p>
+<p>So I wrote a script called <a href="https://gist.github.com/4540264" target="_blank" rel="external">rasterizeElement.js</a> which takes advantage of the webpage object’s clipRect property and sets the clipping rectangle according to the boundaries of the element you are selecting.  </p>
+<div class="gistLoad" data-id="4540264" id="gist-GistID">Loading ….</div>
+
+<p>You can use rasterizeElement like this :  </p>
+<h3 id="Getting-Started"><a href="#Getting-Started" class="headerlink" title="Getting Started"></a><strong><span style="font-size: large;">Getting Started</span></strong></h3><ol>
+<li>Download and install <a href="http://phantomjs.org/" target="_blank" rel="external">PhantomJS</a> (if you haven’t already)</li>
+<li>Download  <a href="https://gist.github.com/4540264" target="_blank" rel="external">rasterizeElement.js</a> and save it in the same folder as PhantomJS</li>
+<li>Run the script according to the Usage Guidelines below</li>
+</ol>
+<div><br><br>### <strong><span style="font-size: large;">Usage Guidelines</span></strong><br><br></div>
+
+<p>You can see the guidelines just by running the script with <code>phantomjs rasterizeElement.js</code>  </p>
+<div class="separator" style="clear: both; text-align: center;"><a href="http://1.bp.blogspot.com/-2FOWU_PlqK0/UPZ8YLIWHbI/AAAAAAAAABQ/4Ozdccfutfw/s1600/rasterizeElement+usage+temp.png" target="_blank" rel="external"><img src="http://1.bp.blogspot.com/-2FOWU_PlqK0/UPZ8YLIWHbI/AAAAAAAAABQ/4Ozdccfutfw/s400/rasterizeElement+usage+temp.png" alt=""></a></div>
+
+<p> the selector parameter, <code>renderElementBySelector</code>, can be any valid CSS selector because under the hood this gets passed to <code>document.querySelector()</code> method to get a reference to the element in the DOM.  </p>
+<h3 id="Bits-and-Bobs-Under-the-Hood"><a href="#Bits-and-Bobs-Under-the-Hood" class="headerlink" title="Bits and Bobs Under the Hood"></a><strong><span style="font-size: large;">Bits and Bobs Under the Hood</span></strong></h3><div>If  you are going to modify or want to work with the rasterizeElement script, here are some things that are worth a mention…</div>
+
+<ul>
+<li>I was unable to get an realistic clipping rectangle for the selected element until I used the page.evaluate function.  This was due to my PhantomJS ignorance, it makes sense that evaluation of the webpage happens in this controlled sandbox.</li>
+<li>If you want to use the optional arguments viewPortsize and paperSize, you will have to escape your object literals in the command line.</li>
+<li>Refer to the original file rasterize.js to see acceptable papersizes if you are wanting non A4 pdf</li>
+</ul>
+<p><em>Ping me on Twitter (<a href="https://twitter.com/stephenhjames" target="_blank" rel="external">@stephenhjames</a>) if you have any suggestions or modifications to this script, or fork the <a href="https://gist.github.com/4540264" target="_blank" rel="external">gist</a> on <a href="https://gist.github.com/stephen-james" target="_blank" rel="external">github</a> and drop a comment</em></p>
+
+        </section>
+
+        <footer class="post-footer"> 
+            <section class="share">
+                <a class="icon-twitter" href="http://twitter.com/share?text=Automating%20Rasterization%20of%20HTML%20elements%20on%20a%20Page&url=http://blog.stvjam.es/2013/01/automating-rasterization-of-html/index.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.stvjam.es/2013/01/automating-rasterization-of-html/index.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://blog.stvjam.es/2013/01/automating-rasterization-of-html/index.html"
+                    onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+            
+        </footer>
+
+	<!--
+	<div
+		data-firebase="now-commenting"
+		data-auth="github google twitter facebook"
+		data-slug="automating-rasterization-of-html"
+		data-inline=".post-content"
+		id="commented-main"></div>
+	-->
+
+        <div class="bottom-teaser cf">
+            <a href="/about" class="silent-link">
+                <div class="isLeft">
+                    <h5 class="index-headline featured"><span>Written by</span></h5>
+                    <section class="author">
+                        <div class="author-image" style="background-image: url(https://s.gravatar.com/avatar/3ddbf93454e3af835de28be002cb07bf?s&#x3D;160)">Blog Logo</div>
+                        <h4>Stephen James</h4>
+                        <p class="bio">JavaScript and Front-End Developer</p>
+                        <hr>
+                        <p class="published">
+                          Published <time datetime="2013-01-16">16 Jan 2013</time>
+                        </p>
+                    </section>
+                </div>
+            </a>
+            <div class="isRight">
+                <h5 class="index-headline featured"><span>Supported by</span></h5>
+                <footer class="site-footer">
+                    <section class="poweredby">Proudly published with <a class="icon-hexo" href="http://hexo.io"> Hexo</a></section>
+                    <!--a class="subscribe" href="/rss.xml"><span class="tooltip">You should subscribe to my RSS feed.</span></a-->
+                    <div class="inner">
+                      <section class="copyright">
+                        All content copyright Stephen James &copy; 2017<br>
+                        All rights reserved.
+                      </section>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        
+        <div id="disqus_thread"></div>
+        <script async>
+        
+        /**
+        *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+        *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+        
+        var disqus_config = function () {
+        this.page.url = 'http://blog.stvjam.es/2013/01/automating-rasterization-of-html/';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'automating-rasterization-of-html'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+        
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = '//blog-stvjam-es.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                                        
+    </article>
+</main>
+
+<div class="bottom-closer">
+    <div class="background-closer-image" style="background-image: url(http://res.cloudinary.com/cylink/image/upload/c_scale,q_auto:good,w_2048/v1480077013/blog.stvjam.es/upsplash-luca-bravo-cadiz-spain.jpg)">
+        Image
+    </div>
+    <div class="inner">
+        <h1 class="blog-title">Stephen James&#x27; Code Blog</h1>
+        <h2 class="blog-description"></h2>
+        <a href="/" class="btn">Back to Overview</a>
+    </div>
+</div>
+
+
+    
+
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+    <script src="/js/readingTime.min.js"></script>
+    <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script> <!-- this is optional -->
+    <!--
+    <script src="/js/commented.min.js"></script>
+    -->
+
+
+</body>
+</html>

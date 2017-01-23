@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <!-- (1) Optimize for mobile versions: http://goo.gl/EOpFl -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- (1) force latest IE rendering engine: bit.ly/1c8EiC9 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Building a Tree in JavaScript to convert flat CSV to hierarchical JSON | blog.stvjam.es</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Building a Tree in JavaScript to convert flat CSV to hierarchical JSON | blog.stvjam.es">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:site" content="http://mark-read.info">
+    <meta name="twitter:creator" content="@MarkReadM">
+    <meta name="google-site-verification" content="">
+    <meta property="fb:admins" content="">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Building a Tree in JavaScript to convert flat CSV to hierarchical JSON | blog.stvjam.es">
+    <meta property="og:description" content="">
+
+    <link rel="stylesheet" href="/js/styles/obsidian.css">
+    <link rel="stylesheet" href="//brick.a.ssl.fastly.net/Linux+Libertine:400,400i,700,700i/Open+Sans:400,400i,700,700i">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" media="print" href="/css/print.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/solarized.css" />
+    <!--
+    <link href="/css/commented.min.css" rel="stylesheet">
+    -->
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    
+</head>
+<body class="">
+
+    
+
+<main class="content" role="main">
+    <article class="post">
+
+        
+        <div class="noarticleimage">
+            <div class="post-meta">
+                <h1 class="post-title">Building a Tree in JavaScript to convert flat CSV to hierarchical JSON</h1>
+                <div class="cf post-meta-text">
+                    <a class="silent-link" href="/about">
+                        <div class="author-image" style="background-image: url(https://s.gravatar.com/avatar/3ddbf93454e3af835de28be002cb07bf?s&#x3D;160)">Blog Logo</div>
+                        <h4 class="author-name" itemprop="author" itemscope itemtype="http://schema.org/Person">Stephen James</h4>
+                    </a>
+                    on
+                    <time datetime="2013-03-25">25 Mar 2013</time>
+                    , tagged on <a href="/tags/javascript/">javascript</a>, <a href="/tags/data-structures/">data-structures</a>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        
+        
+
+            <div class="post-reading">
+                <span class="post-reading-time"></span> read
+            </div>
+        <section class="post-content">
+            <a name="topofpage"></a>
+
+            <p>I wanted to convert hierarchical data expressed in a flattened self-referencing table (in csv) back to a decent hierarchical JSON structure.</p>
+<p>In other words…</p>
+<p><a href="http://1.bp.blogspot.com/-aQY0ek6ItpM/UU_64BcRJ7I/AAAAAAAAAEc/D8vZ5m7A9zE/s1600/data-transform-illustration.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;" target="_blank" rel="external"><img border="0" src="http://1.bp.blogspot.com/-aQY0ek6ItpM/UU_64BcRJ7I/AAAAAAAAAEc/D8vZ5m7A9zE/s1600/data-transform-illustration.png"></a></p>
+<p>To do this I created a few javascript classes to support a simple tree datastructure <code>DataStructures.Tree</code>.  You can find the source, an example using d3 to illustrate the hierarchy and tests <a href="https://github.com/stephen-james/DataStructures.Tree/" target="_blank" rel="external">on github</a>.</p>
+<p>Tree has a root node, the ability to find a node in itself (given an optional matching function) and importantly a factory method that can create a tree given a flat self referencing table. <code>DataStructures.TreeNode</code> has <code>children</code> reference which is instantiated as a <code>DataStructures.TreeNodeCollection</code>.</p>
+<p>To simplify traversal I made <code>Tree</code> able to iterate through its nodes by using a depth first non-recursive approach (by using a queue) to finding the next node.</p>
+<p>Once I had the initial structure in place, the next task was to convert from this Tree structure and its attributes (which had a lot to do with traversal and relationships), back to a simple leaner json object, so I added a toSimpleObject method, which also allows for a decorator function to be passed in to do bespoke formatting/manipulation.</p>
+<p>This was particularly useful for the d3 case that I wanted to use this with (see example in index.html), where I needed to add size values to leaf nodes and remove empty children attributes to indicate which nodes are actually leaves.</p>
+<p>There are quite a few potential improvements I’ve already identified, in the building of the tree from csv I assume that parent nodes already exist when I come across a child row, and the algorithm could and should be optimized, but for now, I’m getting what I want from it!</p>
+<p>If you’re interested, theres a set of unit tests written with QUnit to illustrate how it all fits together in the repo <a href="https://github.com/stephen-james/DataStructures.Tree/tree/master/js/lib/tests" target="_blank" rel="external">/js/lib/tests</a>.</p>
+
+        </section>
+
+        <footer class="post-footer"> 
+            <section class="share">
+                <a class="icon-twitter" href="http://twitter.com/share?text=Building%20a%20Tree%20in%20JavaScript%20to%20convert%20flat%20CSV%20to%20hierarchical%20JSON&url=http://blog.stvjam.es/2013/03/building-tree-in-javascript-to-convert/index.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.stvjam.es/2013/03/building-tree-in-javascript-to-convert/index.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://blog.stvjam.es/2013/03/building-tree-in-javascript-to-convert/index.html"
+                    onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+            
+        </footer>
+
+	<!--
+	<div
+		data-firebase="now-commenting"
+		data-auth="github google twitter facebook"
+		data-slug="building-tree-in-javascript-to-convert"
+		data-inline=".post-content"
+		id="commented-main"></div>
+	-->
+
+        <div class="bottom-teaser cf">
+            <a href="/about" class="silent-link">
+                <div class="isLeft">
+                    <h5 class="index-headline featured"><span>Written by</span></h5>
+                    <section class="author">
+                        <div class="author-image" style="background-image: url(https://s.gravatar.com/avatar/3ddbf93454e3af835de28be002cb07bf?s&#x3D;160)">Blog Logo</div>
+                        <h4>Stephen James</h4>
+                        <p class="bio">JavaScript and Front-End Developer</p>
+                        <hr>
+                        <p class="published">
+                          Published <time datetime="2013-03-25">25 Mar 2013</time>
+                        </p>
+                    </section>
+                </div>
+            </a>
+            <div class="isRight">
+                <h5 class="index-headline featured"><span>Supported by</span></h5>
+                <footer class="site-footer">
+                    <section class="poweredby">Proudly published with <a class="icon-hexo" href="http://hexo.io"> Hexo</a></section>
+                    <!--a class="subscribe" href="/rss.xml"><span class="tooltip">You should subscribe to my RSS feed.</span></a-->
+                    <div class="inner">
+                      <section class="copyright">
+                        All content copyright Stephen James &copy; 2017<br>
+                        All rights reserved.
+                      </section>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        
+        <div id="disqus_thread"></div>
+        <script async>
+        
+        /**
+        *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+        *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+        
+        var disqus_config = function () {
+        this.page.url = 'http://blog.stvjam.es/2013/03/building-tree-in-javascript-to-convert/';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'building-tree-in-javascript-to-convert'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+        
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = '//blog-stvjam-es.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                                        
+    </article>
+</main>
+
+<div class="bottom-closer">
+    <div class="background-closer-image" style="background-image: url(http://res.cloudinary.com/cylink/image/upload/c_scale,q_auto:good,w_2048/v1480077013/blog.stvjam.es/upsplash-luca-bravo-cadiz-spain.jpg)">
+        Image
+    </div>
+    <div class="inner">
+        <h1 class="blog-title">Stephen James&#x27; Code Blog</h1>
+        <h2 class="blog-description"></h2>
+        <a href="/" class="btn">Back to Overview</a>
+    </div>
+</div>
+
+
+    
+
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+    <script src="/js/readingTime.min.js"></script>
+    <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script> <!-- this is optional -->
+    <!--
+    <script src="/js/commented.min.js"></script>
+    -->
+
+
+</body>
+</html>

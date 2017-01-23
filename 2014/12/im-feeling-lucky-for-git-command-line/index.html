@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <!-- (1) Optimize for mobile versions: http://goo.gl/EOpFl -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- (1) force latest IE rendering engine: bit.ly/1c8EiC9 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>I&#x27;m feeling lucky for git command line | blog.stvjam.es</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="I&#x27;m feeling lucky for git command line | blog.stvjam.es">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:site" content="http://mark-read.info">
+    <meta name="twitter:creator" content="@MarkReadM">
+    <meta name="google-site-verification" content="">
+    <meta property="fb:admins" content="">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="I&#x27;m feeling lucky for git command line | blog.stvjam.es">
+    <meta property="og:description" content="">
+
+    <link rel="stylesheet" href="/js/styles/obsidian.css">
+    <link rel="stylesheet" href="//brick.a.ssl.fastly.net/Linux+Libertine:400,400i,700,700i/Open+Sans:400,400i,700,700i">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" media="print" href="/css/print.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/solarized.css" />
+    <!--
+    <link href="/css/commented.min.css" rel="stylesheet">
+    -->
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    
+</head>
+<body class="">
+
+    
+
+<main class="content" role="main">
+    <article class="post">
+
+        
+        <div class="noarticleimage">
+            <div class="post-meta">
+                <h1 class="post-title">I'm feeling lucky for git command line</h1>
+                <div class="cf post-meta-text">
+                    <a class="silent-link" href="/about">
+                        <div class="author-image" style="background-image: url(https://s.gravatar.com/avatar/3ddbf93454e3af835de28be002cb07bf?s&#x3D;160)">Blog Logo</div>
+                        <h4 class="author-name" itemprop="author" itemscope itemtype="http://schema.org/Person">Stephen James</h4>
+                    </a>
+                    on
+                    <time datetime="2014-12-10">10 Dec 2014</time>
+                    , tagged on <a href="/tags/git/">git</a>, <a href="/tags/terminal/">terminal</a>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        
+        
+
+            <div class="post-reading">
+                <span class="post-reading-time"></span> read
+            </div>
+        <section class="post-content">
+            <a name="topofpage"></a>
+
+            <p>This short post describes using a git alias for checking out branches like “I’m feeling lucky”, ie. the first branch matching the entered text gets checked out…</p>
+<p>This makes sense working in a ticketing system for features, with a branch per ticket policy, where branches are often named <code>[PROJECT CODE]-[TICKET NUMBER]-[FEATURE DESCRIPTION]</code></p>
+<p>Instead of typing <code>git checkout AWSM-1234-a-fantastic-feature</code> I just want to address it by ticket number, or any unique text combination that I know of in the feature description.</p>
+<p>So I put together a couple of aliases that can be included in the [alias] section of your .gitconfig file to make this easy</p>
+<h3 id="Git-Lucky"><a href="#Git-Lucky" class="headerlink" title="Git Lucky!"></a>Git Lucky!</h3><p><code>lucky = &quot;!f() { git branch | grep -i &quot; $1 &quot; | head -1 | xargs -r git checkout; }; f&quot;</code></p>
+<p>(UPDATE: on some terminal’s you may need to omit the -r after xargs…)</p>
+<p><code>lucky = &quot;!f() { git branch | grep -i &quot; $1 &quot; | head -1 | xargs git checkout; }; f&quot;</code></p>
+<p>Using this you can check out the <code>AWSM-1234-a-fantastic-feature</code> branch with either</p>
+<p><code>git lucky 1234</code></p>
+<p>or</p>
+<p><code>git lucky fantastic</code></p>
+<h3 id="Git-Find"><a href="#Git-Find" class="headerlink" title="Git Find"></a>Git Find</h3><p>I’m pretty sure there are variants of this out there already, but this just shortcuts grokking through your branch list on your local repo to find a branch with some text</p>
+<p><code>find = &quot;!f() { git branch | grep -i &quot; $1 &quot;; }; f&quot;</code></p>
+<p>If I want to list all branches that contain the text ‘chart’ I can do <code>git find chart</code> and get that list</p>
+<p>Personally this scratches an itch for me, I used to use <code>git br | grep -i whatever</code> and then <code>git co</code>, but being able to do it in one is pretty handy, and in quite a few cases, git lucky is all I need if I know something unique about the branch name.</p>
+<p><em>For more info on setting up aliases and an explanation of the function syntax used for these commands, take a look at <a href="http://haacked.com/archive/2014/07/28/github-flow-aliases/" target="_blank" rel="external">Phil Haacks great article on github flow aliases</a></em></p>
+
+        </section>
+
+        <footer class="post-footer"> 
+            <section class="share">
+                <a class="icon-twitter" href="http://twitter.com/share?text=I'm%20feeling%20lucky%20for%20git%20command%20line&url=http://blog.stvjam.es/2014/12/im-feeling-lucky-for-git-command-line/index.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.stvjam.es/2014/12/im-feeling-lucky-for-git-command-line/index.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://blog.stvjam.es/2014/12/im-feeling-lucky-for-git-command-line/index.html"
+                    onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+            
+        </footer>
+
+	<!--
+	<div
+		data-firebase="now-commenting"
+		data-auth="github google twitter facebook"
+		data-slug="im-feeling-lucky-for-git-command-line"
+		data-inline=".post-content"
+		id="commented-main"></div>
+	-->
+
+        <div class="bottom-teaser cf">
+            <a href="/about" class="silent-link">
+                <div class="isLeft">
+                    <h5 class="index-headline featured"><span>Written by</span></h5>
+                    <section class="author">
+                        <div class="author-image" style="background-image: url(https://s.gravatar.com/avatar/3ddbf93454e3af835de28be002cb07bf?s&#x3D;160)">Blog Logo</div>
+                        <h4>Stephen James</h4>
+                        <p class="bio">JavaScript and Front-End Developer</p>
+                        <hr>
+                        <p class="published">
+                          Published <time datetime="2014-12-10">10 Dec 2014</time>
+                        </p>
+                    </section>
+                </div>
+            </a>
+            <div class="isRight">
+                <h5 class="index-headline featured"><span>Supported by</span></h5>
+                <footer class="site-footer">
+                    <section class="poweredby">Proudly published with <a class="icon-hexo" href="http://hexo.io"> Hexo</a></section>
+                    <!--a class="subscribe" href="/rss.xml"><span class="tooltip">You should subscribe to my RSS feed.</span></a-->
+                    <div class="inner">
+                      <section class="copyright">
+                        All content copyright Stephen James &copy; 2017<br>
+                        All rights reserved.
+                      </section>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        
+        <div id="disqus_thread"></div>
+        <script async>
+        
+        /**
+        *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+        *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+        
+        var disqus_config = function () {
+        this.page.url = 'http://blog.stvjam.es/2014/12/im-feeling-lucky-for-git-command-line/';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'im-feeling-lucky-for-git-command-line'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+        
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = '//blog-stvjam-es.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                                        
+    </article>
+</main>
+
+<div class="bottom-closer">
+    <div class="background-closer-image" style="background-image: url(http://res.cloudinary.com/cylink/image/upload/c_scale,q_auto:good,w_2048/v1480077013/blog.stvjam.es/upsplash-luca-bravo-cadiz-spain.jpg)">
+        Image
+    </div>
+    <div class="inner">
+        <h1 class="blog-title">Stephen James&#x27; Code Blog</h1>
+        <h2 class="blog-description"></h2>
+        <a href="/" class="btn">Back to Overview</a>
+    </div>
+</div>
+
+
+    
+
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+    <script src="/js/readingTime.min.js"></script>
+    <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script> <!-- this is optional -->
+    <!--
+    <script src="/js/commented.min.js"></script>
+    -->
+
+
+</body>
+</html>

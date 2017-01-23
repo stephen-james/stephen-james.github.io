@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <!-- (1) Optimize for mobile versions: http://goo.gl/EOpFl -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- (1) force latest IE rendering engine: bit.ly/1c8EiC9 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Creating an emanating button | blog.stvjam.es</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Creating an emanating button | blog.stvjam.es">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:site" content="http://mark-read.info">
+    <meta name="twitter:creator" content="@MarkReadM">
+    <meta name="google-site-verification" content="">
+    <meta property="fb:admins" content="">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Creating an emanating button | blog.stvjam.es">
+    <meta property="og:description" content="">
+
+    <link rel="stylesheet" href="/js/styles/obsidian.css">
+    <link rel="stylesheet" href="//brick.a.ssl.fastly.net/Linux+Libertine:400,400i,700,700i/Open+Sans:400,400i,700,700i">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" media="print" href="/css/print.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/solarized.css" />
+    <!--
+    <link href="/css/commented.min.css" rel="stylesheet">
+    -->
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    
+</head>
+<body class="">
+
+    
+
+<main class="content" role="main">
+    <article class="post">
+
+        
+        <div class="noarticleimage">
+            <div class="post-meta">
+                <h1 class="post-title">Creating an emanating button</h1>
+                <div class="cf post-meta-text">
+                    <a class="silent-link" href="/about">
+                        <div class="author-image" style="background-image: url(https://s.gravatar.com/avatar/3ddbf93454e3af835de28be002cb07bf?s&#x3D;160)">Blog Logo</div>
+                        <h4 class="author-name" itemprop="author" itemscope itemtype="http://schema.org/Person">Stephen James</h4>
+                    </a>
+                    on
+                    <time datetime="2016-11-27">27 Nov 2016</time>
+                    , tagged on <a href="/tags/css/">css</a>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        
+        
+
+            <div class="post-reading">
+                <span class="post-reading-time"></span> read
+            </div>
+        <section class="post-content">
+            <a name="topofpage"></a>
+
+            <p>Tonight I was re-visiting one of my all time favourite games, Monument Valley.</p>
+<p><img src="http://res.cloudinary.com/cylink/image/upload/c_scale,w_768/v1480286243/blog.stvjam.es/emanating-button/monument-valley-screenshot.jpg" alt="Hard not to love"></p>
+<p>I found that just as the first time I played it, I was utterly dumbstruck by the simplicity and sheer elegance of the game.  I played my way through the first few levels until I started to get that sudden urge to create something with a beautiful color pallette and subtle gradients, or to code some particle effects… or even mess about with HTML 5 audio and some zenlike string sounds.</p>
+<p>I was inspired, perhaps not to create, but definitely to imitate… I was inspired to try take a little slice of that world and translate it into my world, the world of CSS and JavaScript and other technology utterly unsuited to creating a playable Escher painting with bizarre 3D calculations.  Yes, I would need to start small…. Equally because I had a pizza in the oven and a movie lined up for once it was done, it would have to be a 15 minuter…</p>
+<p>Ok, the button, how about that button that comes up at the poignant conclusion of every level?  The roundy one with the emanating ring that is so ensō zen simple but sooo works?!</p>
+<p>Yup, that’d have to do!</p>
+<figure><br>    <p data-height="265" data-theme-id="0" data-slug-hash="MbvqMB" data-default-tab="result" data-user="stephen-james" data-embed-version="2" data-pen-title="Emanating button - inspired by Monument Valley" class="codepen">See the Pen <a href="http://codepen.io/stephen-james/pen/MbvqMB/" target="_blank" rel="external">Emanating button - inspired by Monument Valley</a> by Stephen James (<a href="http://codepen.io/stephen-james" target="_blank" rel="external">@stephen-james</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.</p><br>    <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script><br>    <figcaption>My implementation of an emanating button <a href="http://codepen.io/stephen-james/pen/MbvqMB" target="_blank" rel="external">code here</a></figcaption><br></figure>
+
+<p>I wanted to use intrinsics as much as possible and didn’t want to go down the SVG route, so I am using a normal <code>button</code> dropping a heavy border on it and <code>border-radius: 50%</code> to turn it into a circle.</p>
+<p>The next part I needed was the ring that emanates/ripples outwards.  I didn’t want to write some wrapper div and I definitely didn’t want to add one with JavaScript, but fortunately a pseudo element served just fine.</p>
+<p>I had to offset it’s position by the buttons border size, ie. <code>position: absolute; top: -6px, left: -6px;</code> and then applied an animation to it transformed the scale and modified the ring’s border width and opacity and what I thought would be sensible points in a 0-100% sequence.</p>
+<p>Finally I had to assign <code>animation-iteration-count: infinite;</code> to keep it rippling away.</p>
+<p>All in all, quite happy with the result and it was fun to grab something I liked and try and imitate it, next time I’ll try make it something a bit more impressive, but hey, I enjoyed it :D</p>
+
+        </section>
+
+        <footer class="post-footer"> 
+            <section class="share">
+                <a class="icon-twitter" href="http://twitter.com/share?text=Creating%20an%20emanating%20button&url=http://blog.stvjam.es/2016/11/creating-an-emanating-button/index.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.stvjam.es/2016/11/creating-an-emanating-button/index.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://blog.stvjam.es/2016/11/creating-an-emanating-button/index.html"
+                    onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+            
+        </footer>
+
+	<!--
+	<div
+		data-firebase="now-commenting"
+		data-auth="github google twitter facebook"
+		data-slug="creating-an-emanating-button"
+		data-inline=".post-content"
+		id="commented-main"></div>
+	-->
+
+        <div class="bottom-teaser cf">
+            <a href="/about" class="silent-link">
+                <div class="isLeft">
+                    <h5 class="index-headline featured"><span>Written by</span></h5>
+                    <section class="author">
+                        <div class="author-image" style="background-image: url(https://s.gravatar.com/avatar/3ddbf93454e3af835de28be002cb07bf?s&#x3D;160)">Blog Logo</div>
+                        <h4>Stephen James</h4>
+                        <p class="bio">JavaScript and Front-End Developer</p>
+                        <hr>
+                        <p class="published">
+                          Published <time datetime="2016-11-27">27 Nov 2016</time>
+                        </p>
+                    </section>
+                </div>
+            </a>
+            <div class="isRight">
+                <h5 class="index-headline featured"><span>Supported by</span></h5>
+                <footer class="site-footer">
+                    <section class="poweredby">Proudly published with <a class="icon-hexo" href="http://hexo.io"> Hexo</a></section>
+                    <!--a class="subscribe" href="/rss.xml"><span class="tooltip">You should subscribe to my RSS feed.</span></a-->
+                    <div class="inner">
+                      <section class="copyright">
+                        All content copyright Stephen James &copy; 2017<br>
+                        All rights reserved.
+                      </section>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        
+        <div id="disqus_thread"></div>
+        <script async>
+        
+        /**
+        *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+        *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+        
+        var disqus_config = function () {
+        this.page.url = 'http://blog.stvjam.es/2016/11/creating-an-emanating-button/';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'creating-an-emanating-button'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+        
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = '//blog-stvjam-es.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                                        
+    </article>
+</main>
+
+<div class="bottom-closer">
+    <div class="background-closer-image" style="background-image: url(http://res.cloudinary.com/cylink/image/upload/c_scale,q_auto:good,w_2048/v1480077013/blog.stvjam.es/upsplash-luca-bravo-cadiz-spain.jpg)">
+        Image
+    </div>
+    <div class="inner">
+        <h1 class="blog-title">Stephen James&#x27; Code Blog</h1>
+        <h2 class="blog-description"></h2>
+        <a href="/" class="btn">Back to Overview</a>
+    </div>
+</div>
+
+
+    
+
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+    <script src="/js/readingTime.min.js"></script>
+    <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script> <!-- this is optional -->
+    <!--
+    <script src="/js/commented.min.js"></script>
+    -->
+
+
+</body>
+</html>

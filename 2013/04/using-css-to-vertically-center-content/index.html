@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <!-- (1) Optimize for mobile versions: http://goo.gl/EOpFl -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- (1) force latest IE rendering engine: bit.ly/1c8EiC9 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Using CSS to Vertically Center Content | blog.stvjam.es</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Using CSS to Vertically Center Content | blog.stvjam.es">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:site" content="http://mark-read.info">
+    <meta name="twitter:creator" content="@MarkReadM">
+    <meta name="google-site-verification" content="">
+    <meta property="fb:admins" content="">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Using CSS to Vertically Center Content | blog.stvjam.es">
+    <meta property="og:description" content="">
+
+    <link rel="stylesheet" href="/js/styles/obsidian.css">
+    <link rel="stylesheet" href="//brick.a.ssl.fastly.net/Linux+Libertine:400,400i,700,700i/Open+Sans:400,400i,700,700i">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" media="print" href="/css/print.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/solarized.css" />
+    <!--
+    <link href="/css/commented.min.css" rel="stylesheet">
+    -->
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    
+</head>
+<body class="">
+
+    
+
+<main class="content" role="main">
+    <article class="post">
+
+        
+        <div class="noarticleimage">
+            <div class="post-meta">
+                <h1 class="post-title">Using CSS to Vertically Center Content</h1>
+                <div class="cf post-meta-text">
+                    <a class="silent-link" href="/about">
+                        <div class="author-image" style="background-image: url(https://s.gravatar.com/avatar/3ddbf93454e3af835de28be002cb07bf?s&#x3D;160)">Blog Logo</div>
+                        <h4 class="author-name" itemprop="author" itemscope itemtype="http://schema.org/Person">Stephen James</h4>
+                    </a>
+                    on
+                    <time datetime="2013-04-27">27 Apr 2013</time>
+                    , tagged on <a href="/tags/css/">css</a>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        
+        
+
+            <div class="post-reading">
+                <span class="post-reading-time"></span> read
+            </div>
+        <section class="post-content">
+            <a name="topofpage"></a>
+
+            <p><span style="font-family: Arial, Helvetica, sans-serif;">You might wonder why I’m writing this. &nbsp;It’s been posted about time and time again, with various methods detailed in excellent blog posts, for example Gavin Kistner’s post&nbsp;<a href="http://phrogz.net/css/vertical-align/" target="_blank" rel="external">Understanding vertical-align, or “How (Not) To Vertically Center Content”</a>, but the reason is two-fold :&nbsp;</span><br></p>
+<p><ul></ul></p>
+<p><li><span style="font-family: Arial, Helvetica, sans-serif;">Centering solutions based on knowledge of element heights should be deprecated now that we are adopting fluid and responsive layouts where widths (and hence heights) will vary greatly.</span></li><br></p>
+<p><ul></ul></p>
+<p><li><span style="font-family: Arial, Helvetica, sans-serif;">CSS grew up a bit, got some irregularly supported pimples (The Flexible Box Module Draft&nbsp;<code>display : box</code>), exfoliated for months with W3C scrub and became the incredibly good lookin CSS3 &nbsp;(with Flexible Box Module&nbsp;<code>display : flex</code></span><span class="Apple-style-span" style="font-family: Arial, Helvetica, sans-serif;">)</span><span class="Apple-style-span" style="font-family: Arial, Helvetica, sans-serif;"><br></span></li><br><br><span class="Apple-style-span" style="font-family: Arial, Helvetica, sans-serif;">So to start lets throw out any idea of trying to center objects using </span><span class="Apple-style-span" style="font-family: Arial, Helvetica, sans-serif;"><code>margin : <i>-n</i> px</code></span><span class="Apple-style-span" style="font-family: Arial, Helvetica, sans-serif;"> and variants thereof and look at three ideas that work regardless of element heights.</span><br></p>
+<div><br><span style="font-family: Arial, Helvetica, sans-serif;"><br></span><br><br><br><h3><br><span style="font-family: Arial, Helvetica, sans-serif;">Method 1 - Display as a Table Cell</span></h3><br></div><br><div><br><span style="font-family: Arial, Helvetica, sans-serif;">If you grew up in the bad old days of table layouts, you will be very familiar with the fact that table cells have a useful ability to center inline elements vertically, by setting the <code>vertical-align</code> property</span><br><br><span style="font-family: Arial, Helvetica, sans-serif;"><br></span><br><iframe src="http://jsfiddle.net/stephen_james/4AzzV/embedded/html,result/" style="height: 200px; width: 100%;"><br></iframe><br><br><br><br><span style="font-family: Arial, Helvetica, sans-serif;"><br></span><br><span style="font-family: Arial, Helvetica, sans-serif;">Of course now we’re older and wiser and despise tables for displaying anything that isn’t tabular, but we <i>can</i> make a div behave like a table cell and vertically align stuff using &nbsp;<code>display : table-cell </code></span><span style="font-family: Arial, Helvetica, sans-serif;">.</span><br><br><br><br><iframe src="http://jsfiddle.net/stephen_james/4AzzV/1/embedded/css,html,result/" style="height: 200px; width: 100%;"><br></iframe><br><br><br><br><br><br><span style="font-family: Arial, Helvetica, sans-serif;">Naturally loads cleaner than the extra table tags, but it still doesn’t sit 100% well with me. &nbsp;It isn’t really a table cell, it doesn’t sit in a table and the only reason I am styling it as such is to take advantage of one behaviour and that is vertical alignment. &nbsp;Still, it is a method that works consistently across a wide range of browsers (old and new).</span><br><br><span style="font-family: Arial, Helvetica, sans-serif;"><br></span><br><i><span style="font-family: Arial, Helvetica, sans-serif;">But what about a purer way? &nbsp;How about the purpose built&nbsp;</span><span style="font-family: Arial, Helvetica, sans-serif;">CSS Flexible Box Layout Module which exposes css properties for alignment and justification. &nbsp;</span></i><br><br><i><span style="font-family: Arial, Helvetica, sans-serif;"><br></span></i><i><span style="font-family: Arial, Helvetica, sans-serif;">The only trouble is which version to use due to irregular browser support.</span></i><br><br><i><span style="font-family: Arial, Helvetica, sans-serif;"><br></span></i><br><br><br><h3><br><span style="font-family: Arial, Helvetica, sans-serif;">Method 2 - Flexible Box Layout Module (2009 Draft)</span></h3><br><span style="font-family: Arial, Helvetica, sans-serif;">Here we only use the bits we really need from the flexible box module. &nbsp;In other words, to say we’re looking to use the flexible box module <code>display : box</code>, we want a horizontal layout <code>box-orient : horizontal</code> and we want everything aligned centrally. <code>box-align : center</code></span><span style="font-family: Arial, Helvetica, sans-serif;">. &nbsp;With browser specific prefixes this becomes a bit more verbose, but you get the idea.</span><br><br><span style="font-family: Arial, Helvetica, sans-serif;"><br></span><br><iframe src="http://jsfiddle.net/stephen_james/qP5W8/1/embedded/css,html,result/" style="height: 200px; width: 100%;"><br></iframe><br><br><br><br><br><br><span class="Apple-style-span" style="font-family: Arial, Helvetica, sans-serif;">For uses of the draft beyond just vertical alignment, take a look at the <a href="http://www.w3.org/TR/2009/WD-css3-flexbox-20090723/" target="_blank" rel="external">W3C 2009 Draft</a></span><br><br><br><br><span class="Apple-style-span" style="font-family: Arial, Helvetica, sans-serif;"><i>Its worth noting that you can use this version of the module with legacy browsers by including the&nbsp;<a href="http://flexiejs.com/" target="_blank" rel="external">flexie.js</a>&nbsp;</i>shim</span><br><br><span class="Apple-style-span" style="font-family: Arial, Helvetica, sans-serif;"><br></span><br><h3><br><span style="font-family: Arial, Helvetica, sans-serif;">Method 3 - Flexible Box Layout Module (CSS3)</span></h3><br><div><br><span style="font-family: Arial, Helvetica, sans-serif;">Probably the best description of the CSS3 flexible box module can be found in the <a href="https://developer.mozilla.org/en-US/docs/CSS/Tutorials/Using_CSS_flexible_boxes" target="_blank" rel="external">MDN documentation</a>. &nbsp;Worth noting is the comment at the bottom of the document : &nbsp;&nbsp;</span><i><span class="Apple-style-span" style="color: #333333; font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'DejaVu Sans', Lucida, Arial, Helvetica, sans-serif; font-size: 14px; line-height: 21px;">Firefox supports only single-line flexbox. To activate flexbox support, the user has to change the about:config preference “layout.css.flexbox.enabled” to&nbsp;</span><span class="Apple-style-span" style="color: #333333; font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'DejaVu Sans', Lucida, Arial, Helvetica, sans-serif; font-size: 14px; line-height: 21px;"><code style="font-weight: inherit; font: normal normal normal 100%/normal 'Courier New', 'Andale Mono', monospace;">true</code></span><span class="Apple-style-span" style="color: #333333; font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'DejaVu Sans', Lucida, Arial, Helvetica, sans-serif; font-size: 14px; line-height: 21px;">.</span></i></div><br><div><br><span style="font-family: Arial, Helvetica, sans-serif;"><br></span><br><span style="font-family: Arial, Helvetica, sans-serif;">Our implementation is similar to the Flexbox Draft solution in Method 2 except for property names which have changed with the specification</span><span class="Apple-style-span" style="font-family: Arial, Helvetica, sans-serif;">… So again, we’re saying “hey, using the box layout module, set this to row/horizontal and centrally align it”.</span><br><br><span class="Apple-style-span" style="font-family: Arial, Helvetica, sans-serif;"><br></span></div><br><iframe src="http://jsfiddle.net/stephen_james/hZGyD/1/embedded/css,html,result/" style="height: 200px; width: 100%;"><br></iframe><br><br><br><br><span class="Apple-style-span" style="font-family: Arial, Helvetica, sans-serif;"><br></span><br><span class="Apple-style-span" style="font-family: Arial, Helvetica, sans-serif;">At the time of writing this, this worked only with Chrome and Firefox (with the about:config preference changed mentioned above - which I doubt our users will have done). &nbsp;</span><br><br><span class="Apple-style-span" style="font-family: Arial, Helvetica, sans-serif;"><br></span><br><h3><br></h3><br><h3 style="font-size: medium;"><br><span class="Apple-style-span" style="font-family: Arial, Helvetica, sans-serif;"><h3 style="font-family: Times;"><br><span style="font-family: Arial, Helvetica, sans-serif;">Wrap Up</span></h3><br></span></h3><br><div><br><span class="Apple-style-span" style="font-family: Arial, Helvetica, sans-serif; font-size: small;"><span class="Apple-style-span" style="font-weight: normal;">Which method you choose should really be all about your target browser audience. &nbsp;If you’re needing to reach everyone with the minimum amount of performance impact (i.e. without including shims etc), the old table-cell hack in Method 1 may actually be the best. &nbsp;If you’re in the rare position of working for a future audience who use modern browsers, Methods 2&amp;3&nbsp;are where its at. &nbsp;To cover more bases, you could use <a href="http://modernizr.com/" target="_blank" rel="external">Modernizr</a>,&nbsp;create CSS rules that work with the “flexbox” class it will pop on all browsers that support it and use methods 1, or 2&amp;3 accordingly.</span></span></div><br></div>
+
+        </section>
+
+        <footer class="post-footer"> 
+            <section class="share">
+                <a class="icon-twitter" href="http://twitter.com/share?text=Using%20CSS%20to%20Vertically%20Center%20Content&url=http://blog.stvjam.es/2013/04/using-css-to-vertically-center-content/index.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.stvjam.es/2013/04/using-css-to-vertically-center-content/index.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://blog.stvjam.es/2013/04/using-css-to-vertically-center-content/index.html"
+                    onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+            
+        </footer>
+
+	<!--
+	<div
+		data-firebase="now-commenting"
+		data-auth="github google twitter facebook"
+		data-slug="using-css-to-vertically-center-content"
+		data-inline=".post-content"
+		id="commented-main"></div>
+	-->
+
+        <div class="bottom-teaser cf">
+            <a href="/about" class="silent-link">
+                <div class="isLeft">
+                    <h5 class="index-headline featured"><span>Written by</span></h5>
+                    <section class="author">
+                        <div class="author-image" style="background-image: url(https://s.gravatar.com/avatar/3ddbf93454e3af835de28be002cb07bf?s&#x3D;160)">Blog Logo</div>
+                        <h4>Stephen James</h4>
+                        <p class="bio">JavaScript and Front-End Developer</p>
+                        <hr>
+                        <p class="published">
+                          Published <time datetime="2013-04-27">27 Apr 2013</time>
+                        </p>
+                    </section>
+                </div>
+            </a>
+            <div class="isRight">
+                <h5 class="index-headline featured"><span>Supported by</span></h5>
+                <footer class="site-footer">
+                    <section class="poweredby">Proudly published with <a class="icon-hexo" href="http://hexo.io"> Hexo</a></section>
+                    <!--a class="subscribe" href="/rss.xml"><span class="tooltip">You should subscribe to my RSS feed.</span></a-->
+                    <div class="inner">
+                      <section class="copyright">
+                        All content copyright Stephen James &copy; 2017<br>
+                        All rights reserved.
+                      </section>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        
+        <div id="disqus_thread"></div>
+        <script async>
+        
+        /**
+        *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+        *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+        
+        var disqus_config = function () {
+        this.page.url = 'http://blog.stvjam.es/2013/04/using-css-to-vertically-center-content/';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'using-css-to-vertically-center-content'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+        
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = '//blog-stvjam-es.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                                        
+    </article>
+</main>
+
+<div class="bottom-closer">
+    <div class="background-closer-image" style="background-image: url(http://res.cloudinary.com/cylink/image/upload/c_scale,q_auto:good,w_2048/v1480077013/blog.stvjam.es/upsplash-luca-bravo-cadiz-spain.jpg)">
+        Image
+    </div>
+    <div class="inner">
+        <h1 class="blog-title">Stephen James&#x27; Code Blog</h1>
+        <h2 class="blog-description"></h2>
+        <a href="/" class="btn">Back to Overview</a>
+    </div>
+</div>
+
+
+    
+
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+    <script src="/js/readingTime.min.js"></script>
+    <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script> <!-- this is optional -->
+    <!--
+    <script src="/js/commented.min.js"></script>
+    -->
+
+
+</body>
+</html>

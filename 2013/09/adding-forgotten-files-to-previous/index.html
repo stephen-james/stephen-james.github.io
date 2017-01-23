@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <!-- (1) Optimize for mobile versions: http://goo.gl/EOpFl -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- (1) force latest IE rendering engine: bit.ly/1c8EiC9 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Adding forgotten files to previous commits with Git | blog.stvjam.es</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Adding forgotten files to previous commits with Git | blog.stvjam.es">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:site" content="http://mark-read.info">
+    <meta name="twitter:creator" content="@MarkReadM">
+    <meta name="google-site-verification" content="">
+    <meta property="fb:admins" content="">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Adding forgotten files to previous commits with Git | blog.stvjam.es">
+    <meta property="og:description" content="">
+
+    <link rel="stylesheet" href="/js/styles/obsidian.css">
+    <link rel="stylesheet" href="//brick.a.ssl.fastly.net/Linux+Libertine:400,400i,700,700i/Open+Sans:400,400i,700,700i">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" media="print" href="/css/print.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/solarized.css" />
+    <!--
+    <link href="/css/commented.min.css" rel="stylesheet">
+    -->
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    
+</head>
+<body class="">
+
+    
+
+<main class="content" role="main">
+    <article class="post">
+
+        
+        <div class="noarticleimage">
+            <div class="post-meta">
+                <h1 class="post-title">Adding forgotten files to previous commits with Git</h1>
+                <div class="cf post-meta-text">
+                    <a class="silent-link" href="/about">
+                        <div class="author-image" style="background-image: url(https://s.gravatar.com/avatar/3ddbf93454e3af835de28be002cb07bf?s&#x3D;160)">Blog Logo</div>
+                        <h4 class="author-name" itemprop="author" itemscope itemtype="http://schema.org/Person">Stephen James</h4>
+                    </a>
+                    on
+                    <time datetime="2013-09-12">12 Sep 2013</time>
+                    , tagged on <a href="/tags/git/">git</a>, <a href="/tags/terminal/">terminal</a>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        
+        
+
+            <div class="post-reading">
+                <span class="post-reading-time"></span> read
+            </div>
+        <section class="post-content">
+            <a name="topofpage"></a>
+
+            <p>It’s incredibly easy to forget to stage all your files for a given commit.  Whether its an untracked file that you only realise should be tracked few commits down the road, or if you’re divving up changed files to stage and commit them logically and in doing so leave a file out accidentally, its something that is bound to happen sooner or later.<br><br><br><br>&nbsp;In my team we’ve decided that we’re going to strive for more granular commits to make our repository version history more meaningful, as a result the above has been happening to me a lot more often than usual!&nbsp;<br><br><br><br><br>In the past I would just create a new commit and include the file with some sort of apologetic comment, but thinking of the bigger picture it makes sense to maintain a brighter, cleaner repo where contributors can theoretically checkout any revision and for it to be exactly what it says on the tin (ie. the commit message and description).<br><br><br></p>
+<p></p><h4><br>Adding an unstaged file to a previous commit<br><br><span style="font-weight: normal;">So you’ve run git status and found out that you have an unstaged file that should be added to a previous commit.</span></h4><p></p>
+<p></p><h4><p></p>
+<pre>C:\Code\GitTrackingExample&gt;git status
+# On branch master
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#       <span style="background-color: yellow;">bootstrap.less</span>
+nothing added to commit but untracked files present (use "git add" to track)
+</file></pre>
+<span style="font-weight: normal;"><br></span><span style="font-weight: normal;">Running git log or using your Git client of choice should give you a list of commits</span></h4>
+<pre>C:\Code\GitTrackingExample&gt;git log
+WARNING: terminal is not fully functional
+commit 75667aea53252063388914fcf9f07e1bd52cd654
+Author: Stephen James <stephenjames notmyemail.com="">
+Date:   Thu Sep 12 13:05:57 2013 +0100
+
+    modified page header
+
+commit <span style="background-color: yellow;">af2eb46</span>ec051d2f4b7f8e4eb82ce59a7905f4290
+Author: Stephen James <stephenjames notmyemail.com="">
+Date:   Thu Sep 12 13:03:47 2013 +0100
+
+    <span style="background-color: yellow;">adding style to the site</span>
+
+commit e9877d1469716b3fc3afe282742300f9f24b18bf
+Author: Stephen James <stephenjames notmyemail.com="">
+Date:   Thu Sep 12 13:01:40 2013 +0100
+
+    created site
+</stephenjames></stephenjames></stephenjames></pre>
+<div>
+<br></div>
+This particular change is related to "adding style to the site", (commit af2eb46) so to stage the untracked file and add it to that commit I'll do the following :
+
+<br>
+<br>
+<br>
+<ol>
+<li>Stage the file<br>
+<code>git add bootstrap.less<br><span style="font-family: Times New Roman;"><br></span></code></li>
+<li>Commit it to the desired revision (commit af2eb46)<br><br>
+<pre>C:\Code\GitTrackingExample&gt;git commit --amend -C af2eb46
+[master 226b94c] adding style to site
+ 2 files changed, 1 insertion(+)
+ create mode 100644 bootstrap.less
+</pre>
+</li>
+<br>
+<li>When you're happy that everything is well staged and cleanly committed, push to the upstream repo<br>
+<code>git push</code>
+</li>
+</ol>
+And thats a really simple easy way to do it. &nbsp;Of course if you want to test each revision and the staged changes (which is always a good idea before pushing upstream) you'd want to checkout to that revision first and run your tests.<br>
+<br>
+<h4>
+Amend and it's parameters</h4>
+<div>
+--amend will add the staged files to the commit with the specified hash, but optionally will allow you to modify the commit message. &nbsp;</div>
+<div>
+<br></div>
+<div>
+If you want to pop in a completely new message,&nbsp;</div>
+<div>
+<br></div>
+<div>
+<pre>git commit --amend -m "new commit message" &lt;revision hash&gt;</pre>
+or if you want to leave it untouched, use&nbsp;
+
+<pre>git commit --amend -C &lt;revision hash&gt;</pre>
+
+<p>(as we did in the example above)</p>
+<p>or if you want to edit this on the fly in your terminal/console with vi, just leave out the <code>-C</code> argument and it’ll bring that up for direct editing.<br></p></div><p></p>
+
+        </section>
+
+        <footer class="post-footer"> 
+            <section class="share">
+                <a class="icon-twitter" href="http://twitter.com/share?text=Adding%20forgotten%20files%20to%20previous%20commits%20with%20Git&url=http://blog.stvjam.es/2013/09/adding-forgotten-files-to-previous/index.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.stvjam.es/2013/09/adding-forgotten-files-to-previous/index.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://blog.stvjam.es/2013/09/adding-forgotten-files-to-previous/index.html"
+                    onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+            
+        </footer>
+
+	<!--
+	<div
+		data-firebase="now-commenting"
+		data-auth="github google twitter facebook"
+		data-slug="adding-forgotten-files-to-previous"
+		data-inline=".post-content"
+		id="commented-main"></div>
+	-->
+
+        <div class="bottom-teaser cf">
+            <a href="/about" class="silent-link">
+                <div class="isLeft">
+                    <h5 class="index-headline featured"><span>Written by</span></h5>
+                    <section class="author">
+                        <div class="author-image" style="background-image: url(https://s.gravatar.com/avatar/3ddbf93454e3af835de28be002cb07bf?s&#x3D;160)">Blog Logo</div>
+                        <h4>Stephen James</h4>
+                        <p class="bio">JavaScript and Front-End Developer</p>
+                        <hr>
+                        <p class="published">
+                          Published <time datetime="2013-09-12">12 Sep 2013</time>
+                        </p>
+                    </section>
+                </div>
+            </a>
+            <div class="isRight">
+                <h5 class="index-headline featured"><span>Supported by</span></h5>
+                <footer class="site-footer">
+                    <section class="poweredby">Proudly published with <a class="icon-hexo" href="http://hexo.io"> Hexo</a></section>
+                    <!--a class="subscribe" href="/rss.xml"><span class="tooltip">You should subscribe to my RSS feed.</span></a-->
+                    <div class="inner">
+                      <section class="copyright">
+                        All content copyright Stephen James &copy; 2017<br>
+                        All rights reserved.
+                      </section>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        
+        <div id="disqus_thread"></div>
+        <script async>
+        
+        /**
+        *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+        *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+        
+        var disqus_config = function () {
+        this.page.url = 'http://blog.stvjam.es/2013/09/adding-forgotten-files-to-previous/';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'adding-forgotten-files-to-previous'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+        
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = '//blog-stvjam-es.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                                        
+    </article>
+</main>
+
+<div class="bottom-closer">
+    <div class="background-closer-image" style="background-image: url(http://res.cloudinary.com/cylink/image/upload/c_scale,q_auto:good,w_2048/v1480077013/blog.stvjam.es/upsplash-luca-bravo-cadiz-spain.jpg)">
+        Image
+    </div>
+    <div class="inner">
+        <h1 class="blog-title">Stephen James&#x27; Code Blog</h1>
+        <h2 class="blog-description"></h2>
+        <a href="/" class="btn">Back to Overview</a>
+    </div>
+</div>
+
+
+    
+
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+    <script src="/js/readingTime.min.js"></script>
+    <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script> <!-- this is optional -->
+    <!--
+    <script src="/js/commented.min.js"></script>
+    -->
+
+
+</body>
+</html>

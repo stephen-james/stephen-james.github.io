@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <!-- (1) Optimize for mobile versions: http://goo.gl/EOpFl -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- (1) force latest IE rendering engine: bit.ly/1c8EiC9 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Mocking/Stubbing CommonJS Dependencies with Browserify and Karma | blog.stvjam.es</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Mocking/Stubbing CommonJS Dependencies with Browserify and Karma | blog.stvjam.es">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:site" content="http://mark-read.info">
+    <meta name="twitter:creator" content="@MarkReadM">
+    <meta name="google-site-verification" content="">
+    <meta property="fb:admins" content="">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Mocking/Stubbing CommonJS Dependencies with Browserify and Karma | blog.stvjam.es">
+    <meta property="og:description" content="">
+
+    <link rel="stylesheet" href="/js/styles/obsidian.css">
+    <link rel="stylesheet" href="//brick.a.ssl.fastly.net/Linux+Libertine:400,400i,700,700i/Open+Sans:400,400i,700,700i">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" media="print" href="/css/print.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/solarized.css" />
+    <!--
+    <link href="/css/commented.min.css" rel="stylesheet">
+    -->
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    
+</head>
+<body class="">
+
+    
+
+<main class="content" role="main">
+    <article class="post">
+
+        
+        <div class="noarticleimage">
+            <div class="post-meta">
+                <h1 class="post-title">Mocking/Stubbing CommonJS Dependencies with Browserify and Karma</h1>
+                <div class="cf post-meta-text">
+                    <a class="silent-link" href="/about">
+                        <div class="author-image" style="background-image: url(https://s.gravatar.com/avatar/3ddbf93454e3af835de28be002cb07bf?s&#x3D;160)">Blog Logo</div>
+                        <h4 class="author-name" itemprop="author" itemscope itemtype="http://schema.org/Person">Stephen James</h4>
+                    </a>
+                    on
+                    <time datetime="2015-05-19">19 May 2015</time>
+                    , tagged on <a href="/tags/javascript/">javascript</a>, <a href="/tags/testing/">testing</a>, <a href="/tags/karma/">karma</a>, <a href="/tags/browserify/">browserify</a>, <a href="/tags/commonjs/">commonjs</a>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        
+        
+
+            <div class="post-reading">
+                <span class="post-reading-time"></span> read
+            </div>
+        <section class="post-content">
+            <a name="topofpage"></a>
+
+            <p>Mocking, stubbing and strategies for dependency injection are often overly complex parts of the JavaScript test code we have to write. But they help us isolate the unit that we want to test. Since CommonJS modules often act as a natural seam for a unit, it makes perfect sense that test frameworks like <a href="https://facebook.github.io/jest/" target="_blank" rel="external">Jest</a> automatically mock CommonJS dependencies.<br><a id="more"></a></p>
+<p>While Jest looks absolutely awesome and can do other great things like like parallel testing, <code>runAllTimers</code> and provide promise helpers, Karma and Jasmine are still my weapons of choice and firmly fastened to the old utility belt… Especially now that I’ve found the <a href="https://www.npmjs.com/package/karma-nyan-reporter" target="_blank" rel="external">karma nyan reporter</a> ;)</p>
+<p><a href="http://4.bp.blogspot.com/-OdFyNd7CO6A/VVvA0SJeWKI/AAAAAAAAAHw/HGIDsNPxw1c/s1600/nyan-cat.PNG" target="_blank" rel="external"><img src="http://4.bp.blogspot.com/-OdFyNd7CO6A/VVvA0SJeWKI/AAAAAAAAAHw/HGIDsNPxw1c/s320/nyan-cat.PNG" alt=""></a></p>
+<p>But I’m not here to talk about karma reporters, as colourful as they can be…</p>
+<h2 id="So-how-do-we-stub-CommonJS-Dependencies"><a href="#So-how-do-we-stub-CommonJS-Dependencies" class="headerlink" title="So how do we stub CommonJS Dependencies?"></a>So how do we stub CommonJS Dependencies?</h2><p><a href="https://github.com/thlorenz/proxyquire" target="_blank" rel="external">proxyquire</a> is a super easy to use proxy for requiring modules, that takes an object literal of stubbed dependencies as it’s second argument.</p>
+<p>In the following example we’re going to test a member service, which has a create method and for the purposes of testing we want to isolate it from the ajax service call.</p>
+<p><code>member.js</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">var ajax = require(&apos;./ajax&apos;);</div><div class="line"></div><div class="line">var member = &#123;</div><div class="line">    create: function(firstName, surname) &#123;</div><div class="line">        return ajax.post(&#123;</div><div class="line">            firstName: firstName,</div><div class="line">            surname: surname</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">module.exports = member;</div></pre></td></tr></table></figure>
+<p>In our test spec, we’ll require <code>member.js</code> via proxy and stub out the ajax service to return a successfully resolved promise containing a member number.</p>
+<p><code>member.spec.js</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">var proxyquire = require(&apos;proxyquire&apos;);</div><div class="line">// use a helper to return a promise like the ajax post</div><div class="line">// method would</div><div class="line">var promiseStub = require(&apos;promiseStub&apos;);</div><div class="line">var ajaxStub = &#123;</div><div class="line">    post: function() &#123;</div><div class="line">        return promiseStub.success(&apos;MEM1234&apos;);</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">var member = proxyquire(&apos;../member&apos;, &#123;</div><div class="line">    &apos;./ajax&apos; : ajaxStub</div><div class="line">&#125;);</div><div class="line"></div><div class="line">describe(&apos;using proxyquire&apos;, function() &#123;</div><div class="line">    var memberNumber;</div><div class="line"></div><div class="line">    beforeEach(function (done) &#123;</div><div class="line">        member.create(&apos;Peter&apos;, &apos;Rabbit&apos;).then(function (data) &#123;</div><div class="line">            memberNumber = data;</div><div class="line">            done();</div><div class="line">        &#125;);</div><div class="line">    &#125;);</div><div class="line"></div><div class="line">    it(&apos;subsitutes the required module for the stub&apos;, function() &#123;</div><div class="line">        expect(memberNumber).toBe(&apos;MEM1234&apos;);</div><div class="line">    &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>It’s worth noting that the path to the stubbed module (ie. <code>&#39;./ajax&#39;</code>) is relative to the location of <code>member.js</code>, not <code>member.spec.js</code>.</p>
+<h2 id="Browserify-proxyquire-proxyquireify"><a href="#Browserify-proxyquire-proxyquireify" class="headerlink" title="Browserify + proxyquire = proxyquireify"></a>Browserify + proxyquire = proxyquireify</h2><p><a href="https://github.com/thlorenz" target="_blank" rel="external">@tlorenz</a>, the smart guy behind proxyquire also put together <a href="https://github.com/thlorenz/proxyquireify" target="_blank" rel="external">proxyquireify</a> for use with browserify, and the usage is near identical to the above CommonJS examples except for a couple of reference changes.</p>
+<p>Heres a walkthrough of steps to get it working with Browserify and Karma :</p>
+<ul>
+<li><p>Install the proxyquireify node module</p>
+<p><code>npm install proxyquireify --save-dev</code></p>
+</li>
+<li><p>Edit your <code>karma.conf.js</code> file</p>
+<ul>
+<li>put <code>var proxyquire = require(&#39;proxyquireify&#39;);</code> at the top of the file</li>
+<li><p>in the <code>browserify</code> section, add a <code>configure</code> function to add the proxyquire plugin to browserify and set the root folder for the tests.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">configure: function(bundle) &#123;</div><div class="line">    bundle</div><div class="line">        .plugin(proxyquire.plugin)</div><div class="line">        .require(require.resolve(&apos;./src/javascript/__tests__&apos;), &#123; entry: true &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><em>you can find my full karma.conf.js in a <a href="https://gist.github.com/stephen-james/f1bc040fc7d76db955e4" target="_blank" rel="external">gist here</a></em></p>
+</li>
+</ul>
+</li>
+<li><p>Create some test specs</p>
+<ul>
+<li><p>create an <code>index.js</code> file in the folder you used in the configure section in karma and reference all the specs you want to run by requiring them with standard <code>require</code> calls.</p>
+<p>so given a structure like this…</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">/__test__</div><div class="line">    index.js</div><div class="line">    /spec</div><div class="line">        auth.spec.js</div><div class="line">        member.spec.js</div></pre></td></tr></table></figure>
+<p>… <code>index.js</code> would look like this :</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">require(&apos;./spec/auth.spec.js&apos;);</div><div class="line">require(&apos;./spec/member.spec.js&apos;);</div></pre></td></tr></table></figure>
+<p>And in the spec files themselves we just pull in proxyquire with <code>var proxyquire = require(&#39;proxyquireify&#39;)(require);</code></p>
+<p>eg.</p>
+<p><code>member.spec.js</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">var proxyquire = require(&apos;proxyquireify&apos;)(require);</div><div class="line"></div><div class="line">   // use a helper to return a promise like the ajax post</div><div class="line">   // method would</div><div class="line">   var promiseStub = require(&apos;promiseStub&apos;);</div><div class="line"></div><div class="line">   var ajaxStub = &#123;</div><div class="line">       post: function() &#123;</div><div class="line">           return promiseStub.success(&apos;MEM1234&apos;);</div><div class="line">       &#125;</div><div class="line">   &#125;;</div><div class="line"></div><div class="line">   var member = proxyquire(&apos;../member&apos;, &#123;</div><div class="line">       &apos;./ajax&apos; : ajaxStub</div><div class="line">   &#125;);</div><div class="line"></div><div class="line">   describe(&apos;using proxyquire&apos;, function() &#123;</div><div class="line">       var memberNumber;</div><div class="line"></div><div class="line">       beforeEach(function (done) &#123;</div><div class="line">           member.create(&apos;Peter&apos;, &apos;Rabbit&apos;).then(function (data) &#123;</div><div class="line">               memberNumber = data;</div><div class="line">               done();</div><div class="line">           &#125;);</div><div class="line">       &#125;);</div><div class="line"></div><div class="line">       it(&apos;subsitutes the required module for the stub&apos;, function() &#123;</div><div class="line">          expect(memberNumber).toBe(&apos;MEM1234&apos;);</div><div class="line">       &#125;);</div><div class="line">   &#125;);</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<p>And thats it, Happy stubbing!</p>
+
+        </section>
+
+        <footer class="post-footer"> 
+            <section class="share">
+                <a class="icon-twitter" href="http://twitter.com/share?text=Mocking%2FStubbing%20CommonJS%20Dependencies%20with%20Browserify%20and%20Karma&url=http://blog.stvjam.es/2015/05/mockingstubbing-dependencies-for-unit/index.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.stvjam.es/2015/05/mockingstubbing-dependencies-for-unit/index.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://blog.stvjam.es/2015/05/mockingstubbing-dependencies-for-unit/index.html"
+                    onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+            
+        </footer>
+
+	<!--
+	<div
+		data-firebase="now-commenting"
+		data-auth="github google twitter facebook"
+		data-slug="mockingstubbing-dependencies-for-unit"
+		data-inline=".post-content"
+		id="commented-main"></div>
+	-->
+
+        <div class="bottom-teaser cf">
+            <a href="/about" class="silent-link">
+                <div class="isLeft">
+                    <h5 class="index-headline featured"><span>Written by</span></h5>
+                    <section class="author">
+                        <div class="author-image" style="background-image: url(https://s.gravatar.com/avatar/3ddbf93454e3af835de28be002cb07bf?s&#x3D;160)">Blog Logo</div>
+                        <h4>Stephen James</h4>
+                        <p class="bio">JavaScript and Front-End Developer</p>
+                        <hr>
+                        <p class="published">
+                          Published <time datetime="2015-05-19">19 May 2015</time>
+                        </p>
+                    </section>
+                </div>
+            </a>
+            <div class="isRight">
+                <h5 class="index-headline featured"><span>Supported by</span></h5>
+                <footer class="site-footer">
+                    <section class="poweredby">Proudly published with <a class="icon-hexo" href="http://hexo.io"> Hexo</a></section>
+                    <!--a class="subscribe" href="/rss.xml"><span class="tooltip">You should subscribe to my RSS feed.</span></a-->
+                    <div class="inner">
+                      <section class="copyright">
+                        All content copyright Stephen James &copy; 2017<br>
+                        All rights reserved.
+                      </section>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        
+        <div id="disqus_thread"></div>
+        <script async>
+        
+        /**
+        *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+        *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+        
+        var disqus_config = function () {
+        this.page.url = 'http://blog.stvjam.es/2015/05/mockingstubbing-dependencies-for-unit/';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'mockingstubbing-dependencies-for-unit'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+        
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = '//blog-stvjam-es.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                                        
+    </article>
+</main>
+
+<div class="bottom-closer">
+    <div class="background-closer-image" style="background-image: url(http://res.cloudinary.com/cylink/image/upload/c_scale,q_auto:good,w_2048/v1480077013/blog.stvjam.es/upsplash-luca-bravo-cadiz-spain.jpg)">
+        Image
+    </div>
+    <div class="inner">
+        <h1 class="blog-title">Stephen James&#x27; Code Blog</h1>
+        <h2 class="blog-description"></h2>
+        <a href="/" class="btn">Back to Overview</a>
+    </div>
+</div>
+
+
+    
+
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+    <script src="/js/readingTime.min.js"></script>
+    <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script> <!-- this is optional -->
+    <!--
+    <script src="/js/commented.min.js"></script>
+    -->
+
+
+</body>
+</html>

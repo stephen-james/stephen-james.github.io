@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <!-- (1) Optimize for mobile versions: http://goo.gl/EOpFl -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- (1) force latest IE rendering engine: bit.ly/1c8EiC9 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Using quotes in Git command line commit messages | blog.stvjam.es</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Using quotes in Git command line commit messages | blog.stvjam.es">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:site" content="http://mark-read.info">
+    <meta name="twitter:creator" content="@MarkReadM">
+    <meta name="google-site-verification" content="">
+    <meta property="fb:admins" content="">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Using quotes in Git command line commit messages | blog.stvjam.es">
+    <meta property="og:description" content="">
+
+    <link rel="stylesheet" href="/js/styles/obsidian.css">
+    <link rel="stylesheet" href="//brick.a.ssl.fastly.net/Linux+Libertine:400,400i,700,700i/Open+Sans:400,400i,700,700i">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" media="print" href="/css/print.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/solarized.css" />
+    <!--
+    <link href="/css/commented.min.css" rel="stylesheet">
+    -->
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    
+</head>
+<body class="">
+
+    
+
+<main class="content" role="main">
+    <article class="post">
+
+        
+        <div class="noarticleimage">
+            <div class="post-meta">
+                <h1 class="post-title">Using quotes in Git command line commit messages</h1>
+                <div class="cf post-meta-text">
+                    <a class="silent-link" href="/about">
+                        <div class="author-image" style="background-image: url(https://s.gravatar.com/avatar/3ddbf93454e3af835de28be002cb07bf?s&#x3D;160)">Blog Logo</div>
+                        <h4 class="author-name" itemprop="author" itemscope itemtype="http://schema.org/Person">Stephen James</h4>
+                    </a>
+                    on
+                    <time datetime="2016-11-28">28 Nov 2016</time>
+                    , tagged on <a href="/tags/git/">git</a>, <a href="/tags/terminal/">terminal</a>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        
+        
+
+            <div class="post-reading">
+                <span class="post-reading-time"></span> read
+            </div>
+        <section class="post-content">
+            <a name="topofpage"></a>
+
+            <p><em>Note: This post refers to running git commands in a terminal running a bash shell… YMMV.</em></p>
+<p>I love using git from the command line, I have SourceTree installed which is a fantastic GUI, but I’ve found that for me personally nothing beats the level of control and response that you get from manually performing Git operations.  That said, something that often trips me up is when I start quoting terms in my commit messages, I land up breaking syntax…</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ git commit -m &apos;test commit &apos;hello world&apos;&apos;</div><div class="line">error: pathspec &apos;test commit hello&apos; did not match any file(s) known to git.</div><div class="line">error: pathspec &apos;world&apos; did not match any file(s) known to git.</div></pre></td></tr></table></figure>
+<p>While its easy to spot that I’m doing something stupid in the above commit, its very easy to let an apostrophe slip into a longer and more natural commit message:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">$ git commit -m &apos;Here is the summary of my commit</div><div class="line"></div><div class="line">And a sentence or two where I describe it&apos;s background before I move on and create a bulletted list of change explanations...</div><div class="line">error: pathspec &apos;Here is the summary of my commit</div><div class="line"></div><div class="line">And a sentence or two where I describe its&apos; did not match any file(s) known to git.</div><div class="line">error: pathspec &apos;background&apos; did not match any file(s) known to git.</div><div class="line">error: pathspec &apos;before&apos; did not match any file(s) known to git.</div><div class="line">error: pathspec &apos;I&apos; did not match any file(s) known to git.</div><div class="line">error: pathspec &apos;move&apos; did not match any file(s) known to git.</div><div class="line">error: pathspec &apos;on&apos; did not match any file(s) known to git.</div><div class="line">error: pathspec &apos;and&apos; did not match any file(s) known to git.</div><div class="line">error: pathspec &apos;create&apos; did not match any file(s) known to git.</div><div class="line">error: pathspec &apos;a&apos; did not match any file(s) known to git.</div><div class="line">error: pathspec &apos;bulletted&apos; did not match any file(s) known to git.</div><div class="line">error: pathspec &apos;list&apos; did not match any file(s) known to git.</div><div class="line">error: pathspec &apos;of&apos; did not match any file(s) known to git.</div><div class="line">error: pathspec &apos;change&apos; did not match any file(s) known to git.</div><div class="line">error: pathspec &apos;explanations...&apos; did not match any file(s) known to git.</div></pre></td></tr></table></figure>
+<p>Easy to do right?  Just an apostrophe in <code>it&#39;s</code> is all it takes…</p>
+<p>I used to hack around this, lazily and at the expense of my commit messages I would use a backtick instead of quotes, and frequently omit grammatical apostrophes.  <em>Yuck!</em> I need to change that right?!</p>
+<p>Immediately I have three options or habits to adopt to prevent me from falling into this trap again:</p>
+<ol>
+<li>Get off the command line and use a GUI</li>
+<li>Stop writing commit messages inline and use an editor in my shell</li>
+<li>Escape my quotes</li>
+</ol>
+<h2 id="Option-1-Use-a-GUI"><a href="#Option-1-Use-a-GUI" class="headerlink" title="Option 1: Use a GUI"></a>Option 1: Use a GUI</h2><p>As I alluded to earlier, this just doesn’t work for me, I admit from time to time I do, but since so much of what I do is driven from the terminal, it is my happy space and I’d rather not!</p>
+<h2 id="Option-2-Use-an-editor-in-terminal"><a href="#Option-2-Use-an-editor-in-terminal" class="headerlink" title="Option 2: Use an editor in terminal"></a>Option 2: Use an editor in terminal</h2><p>I normally perform commits using the git alias <code>git cm</code> == <code>git commit -m</code> to save keystrokes… If I rather performed a <code>git commit</code> (without the <code>-m</code> modifier) that would open up vi editor and I could edit my message to my heart’s content before saving and exiting.</p>
+<p>In all fairness, this is probably a good option, just a workflow I’m slightly less used to.  It <em>feels</em> like more steps, more keypresses (to enter INSERT mode in vi, to do the old ESC, <code>:wq</code> sequence).  </p>
+<p>Yet, if I truly have to craft a message, I’d win from the extra editing power available.  I should probably give this habit a 30 day trial :D</p>
+<h2 id="Option-3-Escape-my-Quotes"><a href="#Option-3-Escape-my-Quotes" class="headerlink" title="Option 3: Escape my Quotes"></a>Option 3: Escape my Quotes</h2><p>This is the screamingly obvious solution, but one that is less than intuitive to many, myself included.</p>
+<h3 id="Mixing-Quotes"><a href="#Mixing-Quotes" class="headerlink" title="Mixing Quotes"></a>Mixing Quotes</h3><p>There is a false confidence solution, which is to mix your quotes… You can use doubles for the message and singles for anything you’re quoting inside the message, but this fails quickly when you use the dollar sign, since the terminal will expect that this is a variable:</p>
+<p>ie. </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git cm &quot;This works Mr O&apos;Gregor&quot;</div></pre></td></tr></table></figure>
+<p>whereas:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ git cm &quot;This won&apos;t because of the dollar sign in scope.$apply the apply part will be interpreted as a variable - and omitted!&quot;</div><div class="line">[master fcce7f3] This won&apos;t because of the dollar sign in scope. the apply part will be interpreted as a variable - and omitted!</div><div class="line"> 1 file changed, 0 insertions(+), 0 deletions(-)</div><div class="line"> create mode 100644 myfile.txt</div></pre></td></tr></table></figure>
+<p><em>And thats where it gets dangerous</em>.  Given how often I refer to <code>$</code> prefixed terms in my messages, this is likely to catch me out and since it <em>does actually</em> perform the commit I may not even notice!</p>
+<p>Yes, I can escape the <code>$</code>, as in <code>git cm &quot;\$moneydollars&quot;</code> but there is a big chance I may not remember to.</p>
+<h3 id="Using-Single-Quotes"><a href="#Using-Single-Quotes" class="headerlink" title="Using Single Quotes"></a>Using Single Quotes</h3><p>The terminal interpolation of variables makes double quotes dangerous and fortunately using single quotes around the commit message  prevents this.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ git cm &apos;this will not interpolate: $example&apos;</div><div class="line">[master 7580885] this will not interpolate: $example</div><div class="line">1 file changed, 0 insertions(+), 0 deletions(-)</div><div class="line">create mode 100644 myfile.txt</div></pre></td></tr></table></figure>
+<p>Great stuff, no PEBKAC error happening, so this is a much better habit to get into, <em>but what about apostrophes</em>?</p>
+<p>I’ll still need to escape them but this won’t cut the mustard:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git cm &apos;It\&apos;s... not going to work&apos;</div></pre></td></tr></table></figure>
+<p>While simply escaping the offending character is inuitive to most C style coders, thats simply not how the terminal parses the statement.</p>
+<p>It will believe my statement is ongoing and the terminal will offer me a continuation prompt <code>&gt;</code>.</p>
+<p>What <em>will</em> work is if I escape it correctly for the terminal like this:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git cm &apos;It&apos;\&apos;&apos;s... going to work this time!&apos;</div></pre></td></tr></table></figure>
+<p>Seemingly bizarre to the uninitiated, but try this out in your terminal:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ echo &apos;hello&apos;</div><div class="line">hello</div></pre></td></tr></table></figure>
+<p>As expected, but now try this:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ echo &apos;he&apos;ll&apos;o&apos;</div><div class="line">hello</div></pre></td></tr></table></figure>
+<p>The terminal is parsing the string from the first apostrophe… When it finds the next it will look for another apostrophe and concatentate the contents, then it will resume parsing and concatenating until it finds the last apostrophe at which point it stops string parsing.</p>
+<p>An in depth explanation of this can be found in <a href="http://stackoverflow.com/a/1250279/2086972" target="_blank" rel="external">this SO answer by liori</a> and <a href="http://stackoverflow.com/a/1315213/2086972" target="_blank" rel="external">this one by Adrian Pronk</a>.</p>
+<p><em>Phew! and there we were thinking this would be simple</em></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Given how easy it is to mess things up with inline commit messages (using the <code>-m</code> switch) I think it is definitely worth committing using a shell editor (like vi/vim) a try.</p>
+<p>If you <em>do</em> want to use inline commit messages, be wary of the issues and my recommendations are:</p>
+<ul>
+<li>Use single quote message delimiters to avoid potentially losing parts of your commit messages identified as variables unknowingly.</li>
+<li>Escape apostrophes in the message using <code>&#39;\&#39;&#39;</code></li>
+</ul>
+<p>Please hit me up on the comments if you have a better way, I’ll be very keen to hear it!</p>
+
+        </section>
+
+        <footer class="post-footer"> 
+            <section class="share">
+                <a class="icon-twitter" href="http://twitter.com/share?text=Using%20quotes%20in%20Git%20command%20line%20commit%20messages&url=http://blog.stvjam.es/2016/11/using-quotes-in-git-command-line-commit-messages/index.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.stvjam.es/2016/11/using-quotes-in-git-command-line-commit-messages/index.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://blog.stvjam.es/2016/11/using-quotes-in-git-command-line-commit-messages/index.html"
+                    onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+            
+        </footer>
+
+	<!--
+	<div
+		data-firebase="now-commenting"
+		data-auth="github google twitter facebook"
+		data-slug="using-quotes-in-git-command-line-commit-messages"
+		data-inline=".post-content"
+		id="commented-main"></div>
+	-->
+
+        <div class="bottom-teaser cf">
+            <a href="/about" class="silent-link">
+                <div class="isLeft">
+                    <h5 class="index-headline featured"><span>Written by</span></h5>
+                    <section class="author">
+                        <div class="author-image" style="background-image: url(https://s.gravatar.com/avatar/3ddbf93454e3af835de28be002cb07bf?s&#x3D;160)">Blog Logo</div>
+                        <h4>Stephen James</h4>
+                        <p class="bio">JavaScript and Front-End Developer</p>
+                        <hr>
+                        <p class="published">
+                          Published <time datetime="2016-11-28">28 Nov 2016</time>
+                        </p>
+                    </section>
+                </div>
+            </a>
+            <div class="isRight">
+                <h5 class="index-headline featured"><span>Supported by</span></h5>
+                <footer class="site-footer">
+                    <section class="poweredby">Proudly published with <a class="icon-hexo" href="http://hexo.io"> Hexo</a></section>
+                    <!--a class="subscribe" href="/rss.xml"><span class="tooltip">You should subscribe to my RSS feed.</span></a-->
+                    <div class="inner">
+                      <section class="copyright">
+                        All content copyright Stephen James &copy; 2017<br>
+                        All rights reserved.
+                      </section>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        
+        <div id="disqus_thread"></div>
+        <script async>
+        
+        /**
+        *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+        *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+        
+        var disqus_config = function () {
+        this.page.url = 'http://blog.stvjam.es/2016/11/using-quotes-in-git-command-line-commit-messages/';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'using-quotes-in-git-command-line-commit-messages'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+        
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = '//blog-stvjam-es.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                                        
+    </article>
+</main>
+
+<div class="bottom-closer">
+    <div class="background-closer-image" style="background-image: url(http://res.cloudinary.com/cylink/image/upload/c_scale,q_auto:good,w_2048/v1480077013/blog.stvjam.es/upsplash-luca-bravo-cadiz-spain.jpg)">
+        Image
+    </div>
+    <div class="inner">
+        <h1 class="blog-title">Stephen James&#x27; Code Blog</h1>
+        <h2 class="blog-description"></h2>
+        <a href="/" class="btn">Back to Overview</a>
+    </div>
+</div>
+
+
+    
+
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+    <script src="/js/readingTime.min.js"></script>
+    <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script> <!-- this is optional -->
+    <!--
+    <script src="/js/commented.min.js"></script>
+    -->
+
+
+</body>
+</html>

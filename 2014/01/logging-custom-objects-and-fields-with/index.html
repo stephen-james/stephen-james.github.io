@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <!-- (1) Optimize for mobile versions: http://goo.gl/EOpFl -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- (1) force latest IE rendering engine: bit.ly/1c8EiC9 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Logging Custom Objects and Fields with log4net | blog.stvjam.es</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Logging Custom Objects and Fields with log4net | blog.stvjam.es">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:site" content="http://mark-read.info">
+    <meta name="twitter:creator" content="@MarkReadM">
+    <meta name="google-site-verification" content="">
+    <meta property="fb:admins" content="">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Logging Custom Objects and Fields with log4net | blog.stvjam.es">
+    <meta property="og:description" content="">
+
+    <link rel="stylesheet" href="/js/styles/obsidian.css">
+    <link rel="stylesheet" href="//brick.a.ssl.fastly.net/Linux+Libertine:400,400i,700,700i/Open+Sans:400,400i,700,700i">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" media="print" href="/css/print.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/solarized.css" />
+    <!--
+    <link href="/css/commented.min.css" rel="stylesheet">
+    -->
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    
+</head>
+<body class="">
+
+    
+
+<main class="content" role="main">
+    <article class="post">
+
+        
+        <div class="noarticleimage">
+            <div class="post-meta">
+                <h1 class="post-title">Logging Custom Objects and Fields with log4net</h1>
+                <div class="cf post-meta-text">
+                    <a class="silent-link" href="/about">
+                        <div class="author-image" style="background-image: url(https://s.gravatar.com/avatar/3ddbf93454e3af835de28be002cb07bf?s&#x3D;160)">Blog Logo</div>
+                        <h4 class="author-name" itemprop="author" itemscope itemtype="http://schema.org/Person">Stephen James</h4>
+                    </a>
+                    on
+                    <time datetime="2014-01-23">23 Jan 2014</time>
+                    , tagged on <a href="/tags/net/">.net</a>, <a href="/tags/c/">c#</a>, <a href="/tags/log4net/">log4net</a>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        
+        
+
+            <div class="post-reading">
+                <span class="post-reading-time"></span> read
+            </div>
+        <section class="post-content">
+            <a name="topofpage"></a>
+
+            <p>I’ve used log4net in several projects to help with logging and debugging, but a unique requirement came up where I wanted to log not just human readable strings but to use the logging capability to store information about the actions users are performing on a MVC4 application.</p><br><p>I wanted to track the User, the Controller and the Action the user invoked, how long it took and if there was any error that occurred.  So I created a custom class to represent this called <code>ActionLoggerInfo</code> and an custom <code>ActionFilterAttribute</code> which I applied as a global filter which called log4net to log the object.</p><br><pre><code>public class ActionLoggerInfo<br>{<br>    public string Controller { get; set; }<br>    public string Action { get; set; }<br>    public string User { get; set; }<br>    public long ActionDurationInMillis { get; set; }<br>    public string ExceptionDetails { get; set; }<br><br>    public override string ToString()<br>    {<br>        return JsonConvert.SerializeObject(this);<br>    }<br>}<br></code></pre><br><br><p>I logged actions from the filter using the standard <code>Info</code> method.<br></p><br><pre><code>ILog _actionLogger = LogManager.GetLogger(&quot;ActionLogger&quot;);<br><br>. . .<br>var actionInfo = new ActionLoggerInfo()<br>{<br>    // set values of action info object<br>    …<br>};<br><br>_actionLogger.Info(actionInfo);<br></code></pre><br><br><p><em>Quite importantly the log4net log methods (<code>Debug</code>, <code>Info</code>, <code>Warn</code>, <code>…</code>) accept <code>message</code> as <code>object</code> and <em>not</em> as a <code>string</code>, which allows for neat decoupling of serialization to happen via configurable layout patterns and converters.</em></p><br><p>Overriding the <code>ToString</code> method of my custom <code>ActionLoggerInfo</code> class got me some of the way because when the default converters were called, they would invoke the <code>ToString</code> override and I could serialize the object to Json, but what I really wanted was for the individual fields of the custom info object to be saved in seperate columns of a table so that I could cobble together some very simple usage reporting for the site.  Since I was targetting a SQL environment having a message string that would have to be parsed for each logged row simply wouldn’t cut it.</p><br><p>I needed a way to map individual fields in the log to columns in an <code>AdoNetAppender</code>.</p><br><p>Out the box, log4net provides a bunch of <a href="http://logging.apache.org/log4net/release/sdk/log4net.Util.PatternString.html" target="_blank" rel="external">conversion pattern names</a> that can be used in the log pattern string to shape your log, written in <code>printf</code> style (for example <code>%message</code>).  To solve the problem I needed to introduce a new named pattern to represent my custom object and then be able to address individual fields within it.</p><br><h3>Adding a named Conversion Pattern</h3><br><p>The route I took to do this was to create a custom <code>PatternLayout</code> class in order to introduce the new conversion pattern name <code>%actionInfo</code> for the <code>ActionLoggerInfo</code> class.</p><br><pre><code>public class ActionLayoutPattern : PatternLayout<br>{<br>    public ActionLayoutPattern()<br>    {<br>        AddConverter(new ConverterInfo<br>            {<br>                Name = &quot;actionInfo&quot;,<br>                Type = typeof(ActionConverter)<br>            }<br>        );<br>    }<br>}<br></code></pre><br><br><p>You’ll notice that there is no link to <code>ActionLoggerInfo</code> directly in this pattern, it only serves to establish the name &quot;actionInfo&quot; and the converter <code>ActionConverter</code> to be used to perform the conversion.</p><br><h3>The Converter</h3><br><p>The converter is responsible for handling conversion requests of a <code>LoggingEvent</code> when log4net calls it internally to render a given pattern name to the writer.  The converter can then inspect whichever aspect of the <code>LoggingEvent</code> it needs to retrieve the value to write, including the <code>MessageObject</code> that was originally logged.<br></p><br><p>Since we’re passing the custom object in as the <code>MessageObject</code> we have everything that we need to inspect the object and pull out the fields that we want to log wh.</p><br><p>Patterns in log4net follow a %<em>conversionPatternName</em>{<em>option</em>} syntax.  Where the <em>conversionPatternName</em> is used to identify which converter to use from the <code>PatternLayout</code>‘s list of converters, and the <em>option</em> in squiggly brackets allows you to pass additional information.</p><br><p>In the case of a custom object this gives us the mechanism we need to specify which field of an object we are wanting to render. eg. <code>%actionInfo{controller}</code></p><br><p>The <code>option</code> in the <code>%&lt;conversionPatternName&gt;{&lt;option&gt;}</code> pattern syntax is extracted and mapped to <code>ActionConvert.Option</code> when the converter is invoked, so it is trivial to inspect it and return the field you want.</p><br><pre><code>public class ActionConverter : PatternConverter<br>{<br>    protected override void Convert(System.IO.TextWriter writer, object state)<br>    {<br>        if (state == null)<br>        {<br>            writer.Write(SystemInfo.NullText);<br>            return;<br>        }<br><br>        var loggingEvent = state as LoggingEvent;<br>        var actionInfo = loggingEvent.MessageObject as ActionLoggerInfo;<br><br>        if (actionInfo == null)<br>        {<br>            writer.Write(SystemInfo.NullText);<br>        }<br>        else<br>        {<br>            switch(this.Option.ToLower())<br>            {<br>                case &quot;controller&quot; :<br>                    writer.Write(actionInfo.Controller);<br>                    break;<br>                case &quot;action&quot; :<br>                    writer.Write(actionInfo.Action);<br>                    break;<br>                case &quot;duration&quot; :<br>                    writer.Write(actionInfo.ActionDurationInMillis);<br>                    break;<br>                case &quot;user&quot; :<br>                    writer.Write(actionInfo.User);<br>                    break;<br>                case &quot;exceptiondetails&quot; :<br>                    writer.Write(actionInfo.ExceptionDetails);<br>                    break;<br>                default :<br>                    writer.Write(SystemInfo.NullText);<br>                    break;<br>            }<br>        }<br>    }<br>}<br></code></pre><br><br><p><em>Using a bit of Reflection it would be easy to make a generic object converter that could reflect to extract the values properties of an object based on the option parameter, but for my purposes the <code>switch</code> statement was adequate</em></p><br><h3>Creating the Log Table in the database</h3><br><pre><code>CREATE SCHEMA [Logs]<br><br>GO<br><br>CREATE TABLE [Logs].[Actions]<br>(<br>    [Id] INT NOT NULL IDENTITY(1,1) PRIMARY KEY,<br>    [Date] [datetime] NOT NULL,<br>    [Thread] [varchar] (255) NOT NULL,<br>    [Level] [varchar] (50) NOT NULL,<br>    [Logger] [varchar] (255) NOT NULL,<br>    [Message] [varchar] (4000) NOT NULL,<br>    [Exception] [varchar] (2000) NULL,<br>    [Controller] [varchar] (2000) NULL,<br>    [Action] [varchar] (2000) NULL,<br>    [User] [varchar] (2000) NULL,<br>    [Duration] [int] NULL<br>)<br></code></pre><br><br><p>Easily done.</p><br><h3>Configuring the AdoNetAppender</h3><br><p>We have to modify the <code>commandText</code> of the appender to contain the new database fields and parameters for the custom object’s fields.</p><br><p>Each parameter is then specified explicitly with our custom <code>PatternLayout</code> (in this example <code>MyApp.ActionLayoutPattern</code>) and with a <code>conversionPattern</code> that uses the custom conversion pattern name (in this example <code>%actionInfo</code>) and the field <code>{controller}</code>. </p><br><pre><code>      &lt;parameter&gt;<br>        &lt;parameterName value=&quot;@controller&quot; /&gt;<br>        &lt;dbType value=&quot;String&quot; /&gt;<br>        &lt;size value=&quot;2000&quot; /&gt;<br>        &lt;layout type=&quot;MyApp.ActionLayoutPattern&quot;&gt;<br>          &lt;conversionPattern value=&quot;%actionInfo{controller}&quot; /&gt;<br>        &lt;/layout&gt;<br>      &lt;/parameter&gt;<br></code></pre><br><br><p>Full appender config example : </p><br><pre><code>  &lt;log4net&gt;<br>    &lt;appender name=&quot;AdoNetAppender&quot; type=&quot;log4net.Appender.AdoNetAppender&quot;&gt;<br>      &lt;bufferSize value=&quot;100&quot; /&gt;<br>      &lt;connectionType value=&quot;System.Data.SqlClient.SqlConnection, System.Data, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089&quot; /&gt;<br>      &lt;connectionString value=&quot;Data Source=(localdb)\Projects;Initial Catalog=LoggingDB;Integrated Security=true;&quot; /&gt;<br>      &lt;commandText value=&quot;INSERT INTO [Logs].[Actions] ([Date],[Thread],[Level],[Logger],[Message],[Exception],[Controller],[Action],[User],[Duration]) VALUES (@log_date, @thread, @log_level, @logger, @message, @exception, @controller, @action, @user, @duration)&quot; /&gt;<br>      &lt;parameter&gt;<br>        &lt;parameterName value=&quot;@log_date&quot; /&gt;<br>        &lt;dbType value=&quot;DateTime&quot; /&gt;<br>        &lt;layout type=&quot;log4net.Layout.RawTimeStampLayout&quot; /&gt;<br>      &lt;/parameter&gt;<br>      &lt;parameter&gt;<br>        &lt;parameterName value=&quot;@thread&quot; /&gt;<br>        &lt;dbType value=&quot;String&quot; /&gt;<br>        &lt;size value=&quot;255&quot; /&gt;<br>        &lt;layout type=&quot;log4net.Layout.PatternLayout&quot;&gt;<br>          &lt;conversionPattern value=&quot;%thread&quot; /&gt;<br>        &lt;/layout&gt;<br>      &lt;/parameter&gt;<br>      &lt;parameter&gt;<br>        &lt;parameterName value=&quot;@log_level&quot; /&gt;<br>        &lt;dbType value=&quot;String&quot; /&gt;<br>        &lt;size value=&quot;50&quot; /&gt;<br>        &lt;layout type=&quot;log4net.Layout.PatternLayout&quot;&gt;<br>          &lt;conversionPattern value=&quot;%level&quot; /&gt;<br>        &lt;/layout&gt;<br>      &lt;/parameter&gt;<br>      &lt;parameter&gt;<br>        &lt;parameterName value=&quot;@logger&quot; /&gt;<br>        &lt;dbType value=&quot;String&quot; /&gt;<br>        &lt;size value=&quot;255&quot; /&gt;<br>        &lt;layout type=&quot;log4net.Layout.PatternLayout&quot;&gt;<br>          &lt;conversionPattern value=&quot;%logger&quot; /&gt;<br>        &lt;/layout&gt;<br>      &lt;/parameter&gt;<br>      &lt;parameter&gt;<br>        &lt;parameterName value=&quot;@message&quot; /&gt;<br>        &lt;dbType value=&quot;String&quot; /&gt;<br>        &lt;size value=&quot;4000&quot; /&gt;<br>        &lt;layout type=&quot;log4net.Layout.PatternLayout&quot;&gt;<br>          &lt;conversionPattern value=&quot;%message&quot; /&gt;<br>        &lt;/layout&gt;<br>      &lt;/parameter&gt;<br>      &lt;parameter&gt;<br>        &lt;parameterName value=&quot;@exception&quot; /&gt;<br>        &lt;dbType value=&quot;String&quot; /&gt;<br>        &lt;size value=&quot;2000&quot; /&gt;<br>        &lt;layout type=&quot;log4net.Layout.ExceptionLayout&quot; /&gt;<br>      &lt;/parameter&gt;<br>      &lt;parameter&gt;<br>        &lt;parameterName value=&quot;@controller&quot; /&gt;<br>        &lt;dbType value=&quot;String&quot; /&gt;<br>        &lt;size value=&quot;2000&quot; /&gt;<br>        &lt;layout type=&quot;Beam.Ui.Filters.ActionLayoutPattern&quot;&gt;<br>          &lt;conversionPattern value=&quot;%actionInfo{controller}&quot; /&gt;<br>        &lt;/layout&gt;<br>      &lt;/parameter&gt;<br>      &lt;parameter&gt;<br>        &lt;parameterName value=&quot;@action&quot; /&gt;<br>        &lt;dbType value=&quot;String&quot; /&gt;<br>        &lt;size value=&quot;2000&quot; /&gt;<br>        &lt;layout type=&quot;Beam.Ui.Filters.ActionLayoutPattern&quot;&gt;<br>          &lt;conversionPattern value=&quot;%actionInfo{action}&quot; /&gt;<br>        &lt;/layout&gt;<br>      &lt;/parameter&gt;<br>      &lt;parameter&gt;<br>        &lt;parameterName value=&quot;@user&quot; /&gt;<br>        &lt;dbType value=&quot;String&quot; /&gt;<br>        &lt;size value=&quot;2000&quot; /&gt;<br>        &lt;layout type=&quot;Beam.Ui.Filters.ActionLayoutPattern&quot;&gt;<br>          &lt;conversionPattern value=&quot;%actionInfo{user}&quot; /&gt;<br>        &lt;/layout&gt;<br>      &lt;/parameter&gt;<br>      &lt;parameter&gt;<br>        &lt;parameterName value=&quot;@duration&quot; /&gt;<br>        &lt;dbType value=&quot;Int32&quot; /&gt;<br>        &lt;layout type=&quot;Beam.Ui.Filters.ActionLayoutPattern&quot;&gt;<br>          &lt;conversionPattern value=&quot;%actionInfo{duration}&quot; /&gt;<br>        &lt;/layout&gt;<br>      &lt;/parameter&gt;<br>    &lt;/appender&gt;<br><br>    …<br><br>  &lt;/log4net&gt;<br></code></pre><br><br><p>Great I hope that helps someone else in a similar position.<br></p><br><h2>Related Articles</h2><br><p>Here are the articles that helped me along the way…</p><br><p><a href="http://dejanfajfar.wordpress.com/2011/04/14/log4net-custom-layoutpattern/" target="_blank" rel="external">Log4Net custom LayoutPattern - Dejan Fajfar (April 2011)</a></p><br><p><a href="http://www.hanselman.com/blog/CreatingYourOwnCustomPatternLayoutPatternParserAndPatternConvertorWithLog4net.aspx" target="_blank" rel="external">Creating your own Custom PatternLayout, PatternParser, and PatternConvertor with log4net - Scott Hanselman (Jul 2004)</a></p><br><p><a href="http://cowarthill.com/blog/index.php/2009/12/23/log4net-patternstring/" target="_blank" rel="external">log4net PatternString - House of Metnetsky ()</a></p>
+
+        </section>
+
+        <footer class="post-footer"> 
+            <section class="share">
+                <a class="icon-twitter" href="http://twitter.com/share?text=Logging%20Custom%20Objects%20and%20Fields%20with%20log4net&url=http://blog.stvjam.es/2014/01/logging-custom-objects-and-fields-with/index.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.stvjam.es/2014/01/logging-custom-objects-and-fields-with/index.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://blog.stvjam.es/2014/01/logging-custom-objects-and-fields-with/index.html"
+                    onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+            
+        </footer>
+
+	<!--
+	<div
+		data-firebase="now-commenting"
+		data-auth="github google twitter facebook"
+		data-slug="logging-custom-objects-and-fields-with"
+		data-inline=".post-content"
+		id="commented-main"></div>
+	-->
+
+        <div class="bottom-teaser cf">
+            <a href="/about" class="silent-link">
+                <div class="isLeft">
+                    <h5 class="index-headline featured"><span>Written by</span></h5>
+                    <section class="author">
+                        <div class="author-image" style="background-image: url(https://s.gravatar.com/avatar/3ddbf93454e3af835de28be002cb07bf?s&#x3D;160)">Blog Logo</div>
+                        <h4>Stephen James</h4>
+                        <p class="bio">JavaScript and Front-End Developer</p>
+                        <hr>
+                        <p class="published">
+                          Published <time datetime="2014-01-23">23 Jan 2014</time>
+                        </p>
+                    </section>
+                </div>
+            </a>
+            <div class="isRight">
+                <h5 class="index-headline featured"><span>Supported by</span></h5>
+                <footer class="site-footer">
+                    <section class="poweredby">Proudly published with <a class="icon-hexo" href="http://hexo.io"> Hexo</a></section>
+                    <!--a class="subscribe" href="/rss.xml"><span class="tooltip">You should subscribe to my RSS feed.</span></a-->
+                    <div class="inner">
+                      <section class="copyright">
+                        All content copyright Stephen James &copy; 2017<br>
+                        All rights reserved.
+                      </section>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        
+        <div id="disqus_thread"></div>
+        <script async>
+        
+        /**
+        *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+        *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+        
+        var disqus_config = function () {
+        this.page.url = 'http://blog.stvjam.es/2014/01/logging-custom-objects-and-fields-with/';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'logging-custom-objects-and-fields-with'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+        
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = '//blog-stvjam-es.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                                        
+    </article>
+</main>
+
+<div class="bottom-closer">
+    <div class="background-closer-image" style="background-image: url(http://res.cloudinary.com/cylink/image/upload/c_scale,q_auto:good,w_2048/v1480077013/blog.stvjam.es/upsplash-luca-bravo-cadiz-spain.jpg)">
+        Image
+    </div>
+    <div class="inner">
+        <h1 class="blog-title">Stephen James&#x27; Code Blog</h1>
+        <h2 class="blog-description"></h2>
+        <a href="/" class="btn">Back to Overview</a>
+    </div>
+</div>
+
+
+    
+
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+    <script src="/js/readingTime.min.js"></script>
+    <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script> <!-- this is optional -->
+    <!--
+    <script src="/js/commented.min.js"></script>
+    -->
+
+
+</body>
+</html>

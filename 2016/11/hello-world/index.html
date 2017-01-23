@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <!-- (1) Optimize for mobile versions: http://goo.gl/EOpFl -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- (1) force latest IE rendering engine: bit.ly/1c8EiC9 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Migrating to Hexo | blog.stvjam.es</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Migrating to Hexo | blog.stvjam.es">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:site" content="http://mark-read.info">
+    <meta name="twitter:creator" content="@MarkReadM">
+    <meta name="google-site-verification" content="">
+    <meta property="fb:admins" content="">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Migrating to Hexo | blog.stvjam.es">
+    <meta property="og:description" content="">
+
+    <link rel="stylesheet" href="/js/styles/obsidian.css">
+    <link rel="stylesheet" href="//brick.a.ssl.fastly.net/Linux+Libertine:400,400i,700,700i/Open+Sans:400,400i,700,700i">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" media="print" href="/css/print.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/solarized.css" />
+    <!--
+    <link href="/css/commented.min.css" rel="stylesheet">
+    -->
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    
+</head>
+<body class="">
+
+    
+
+<main class="content" role="main">
+    <article class="post">
+
+        
+        <div class="noarticleimage">
+            <div class="post-meta">
+                <h1 class="post-title">Migrating to Hexo</h1>
+                <div class="cf post-meta-text">
+                    <a class="silent-link" href="/about">
+                        <div class="author-image" style="background-image: url(https://s.gravatar.com/avatar/3ddbf93454e3af835de28be002cb07bf?s&#x3D;160)">Blog Logo</div>
+                        <h4 class="author-name" itemprop="author" itemscope itemtype="http://schema.org/Person">Stephen James</h4>
+                    </a>
+                    on
+                    <time datetime="2016-11-25">25 Nov 2016</time>
+                    , tagged on <a href="/tags/hexo/">hexo</a>, <a href="/tags/blogging/">blogging</a>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        
+        
+
+            <div class="post-reading">
+                <span class="post-reading-time"></span> read
+            </div>
+        <section class="post-content">
+            <a name="topofpage"></a>
+
+            <p>Well it looks like I’m finally pulling the trigger on my old Blogger blog and moving it over to Hexo :D … It’s not you Blogger, it’s me - I just infinitely prefer writing in markdown and git based publishing!<br><a id="more"></a> </p>
+<p>UPDATE:  That was possibly one of the easiest transitions I could have hoped for, if anyone is interested I followed these steps:</p>
+<ol>
+<li>Followed the simple npm install instructions over <a href="https://hexo.io/" target="_blank" rel="external"><code>hexo.io</code></a></li>
+<li>Copied and translated my Blogger posts from HTML to Markdown using <a href="https://www.npmjs.com/package/to-markdown" target="_blank" rel="external"><code>to-markdown</code></a>  (Admittedly, I didn’t have many posts to convert :) )</li>
+<li>Ensured I saved each post with the same slugged abbreviated title that Blogger had used for the permalinks (this was to simplify redirects which you’ll see in Step 5)</li>
+<li>Generated and Deployed my blog with <code>hexo generate</code> and <code>hexo deploy</code> to my Github Pages repo</li>
+<li><p>Modified my Blogger template with pseudo-canonical redirects using technique shown in <a href="http://www.wpbeginner.com/wp-tutorials/how-to-switch-from-blogger-to-wordpress-without-losing-google-rankings/" target="_blank" rel="external">How to Switch from Blogger to WordPress…</a><br>While the Blogger=&gt;Wordpress article is great, the necessity of using JavaScript to redirect in lieue of Blogger offering a 301 service is unfortunate.  Also I refer to the links as pseudo-canonical because since we are unable to manipulate strings in the Blogger template, the solution revolves around passing a query string param that the new blog can parse and in turn redirect to the correct post.  This is not really canonical, as the true canonical url would be the new blogs permalink - not some transient url with a param.  I added some JavaScript to modify the <code>&lt;link rel=&quot;canonical&quot;&gt;</code> in the Blogger document head to the correct value, but am unsure whether crawlers will pick this link up pre, or post JS execution.  Bearing in mind that Google does execute JS, but I’m not sure at exactly the stage it does this and for what type of scraping.</p>
+<p>Here is my best attempt at bending template to my will… A 301 would be far preferable!</p>
+<p></p><p data-height="265" data-theme-id="0" data-slug-hash="bBYYKz" data-default-tab="html" data-user="stephen-james" data-embed-version="2" data-pen-title="Hacking Blogger template for JS Redirects and canonical links" class="codepen">See the Pen <a href="http://codepen.io/stephen-james/pen/bBYYKz/" target="_blank" rel="external">Hacking Blogger template for JS Redirects and canonical links</a> by Stephen James (<a href="http://codepen.io/stephen-james" target="_blank" rel="external">@stephen-james</a>) on <a href="http://codepen.io" target="_blank" rel="external">CodePen</a>.</p><p></p>
+<script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+</li>
+<li><p>Added a function which I call to catch the <code>blogger=&lt;Blogger Permalink&gt;</code> style redirects and convert them to how I’ve configured my Hexo Permalinks</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">function redirectBloggerLinks() &#123;</div><div class="line">    var search = window.location.search;</div><div class="line">    if (search.startsWith(&apos;?blogger=&apos;)) &#123;</div><div class="line">        var expression = /(?:http:\/\/example.com\/\?blogger=http:\/\/example.blogspot.co.uk)(.*)/g;</div><div class="line">        var matches = expression.exec(window.location.href);</div><div class="line"></div><div class="line">        if (matches &amp;&amp; matches.length === 2) &#123;</div><div class="line">            window.location.href = matches[1].replace(/\.html$/g, &apos;&apos;) + &apos;/&apos;;</div><div class="line">        &#125; </div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>I call this method in the theme’s <code>index.js</code> file.</p>
+</li>
+<li>The rest was tweaks and experimentation, I have settled on using the <a href="https://github.com/jaredly/hexium" target="_blank" rel="external">Hexium</a> theme, and am just modding it to fit my needs - which so far has proven easy enough.  If you’re leaning towards the same theme, check this issue which may still help you out if you get in a pickle with <a href="https://github.com/jaredly/hexium/issues/3" target="_blank" rel="external">funny boilerplate messages</a></li>
+</ol>
+
+        </section>
+
+        <footer class="post-footer"> 
+            <section class="share">
+                <a class="icon-twitter" href="http://twitter.com/share?text=Migrating%20to%20Hexo&url=http://blog.stvjam.es/2016/11/hello-world/index.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://blog.stvjam.es/2016/11/hello-world/index.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://blog.stvjam.es/2016/11/hello-world/index.html"
+                    onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+            
+        </footer>
+
+	<!--
+	<div
+		data-firebase="now-commenting"
+		data-auth="github google twitter facebook"
+		data-slug="hello-world"
+		data-inline=".post-content"
+		id="commented-main"></div>
+	-->
+
+        <div class="bottom-teaser cf">
+            <a href="/about" class="silent-link">
+                <div class="isLeft">
+                    <h5 class="index-headline featured"><span>Written by</span></h5>
+                    <section class="author">
+                        <div class="author-image" style="background-image: url(https://s.gravatar.com/avatar/3ddbf93454e3af835de28be002cb07bf?s&#x3D;160)">Blog Logo</div>
+                        <h4>Stephen James</h4>
+                        <p class="bio">JavaScript and Front-End Developer</p>
+                        <hr>
+                        <p class="published">
+                          Published <time datetime="2016-11-25">25 Nov 2016</time>
+                        </p>
+                    </section>
+                </div>
+            </a>
+            <div class="isRight">
+                <h5 class="index-headline featured"><span>Supported by</span></h5>
+                <footer class="site-footer">
+                    <section class="poweredby">Proudly published with <a class="icon-hexo" href="http://hexo.io"> Hexo</a></section>
+                    <!--a class="subscribe" href="/rss.xml"><span class="tooltip">You should subscribe to my RSS feed.</span></a-->
+                    <div class="inner">
+                      <section class="copyright">
+                        All content copyright Stephen James &copy; 2017<br>
+                        All rights reserved.
+                      </section>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        
+        <div id="disqus_thread"></div>
+        <script async>
+        
+        /**
+        *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+        *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+        
+        var disqus_config = function () {
+        this.page.url = 'http://blog.stvjam.es/2016/11/hello-world/';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'hello-world'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+        
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = '//blog-stvjam-es.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                                        
+    </article>
+</main>
+
+<div class="bottom-closer">
+    <div class="background-closer-image" style="background-image: url(http://res.cloudinary.com/cylink/image/upload/c_scale,q_auto:good,w_2048/v1480077013/blog.stvjam.es/upsplash-luca-bravo-cadiz-spain.jpg)">
+        Image
+    </div>
+    <div class="inner">
+        <h1 class="blog-title">Stephen James&#x27; Code Blog</h1>
+        <h2 class="blog-description"></h2>
+        <a href="/" class="btn">Back to Overview</a>
+    </div>
+</div>
+
+
+    
+
+    <script type="text/javascript" src="/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
+    <script src="/js/readingTime.min.js"></script>
+    <script src="/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script> <!-- this is optional -->
+    <!--
+    <script src="/js/commented.min.js"></script>
+    -->
+
+
+</body>
+</html>
